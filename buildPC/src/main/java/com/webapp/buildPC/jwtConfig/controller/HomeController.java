@@ -26,7 +26,7 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/building")
     public String home() {
         return "Welcome to app building pc!!";
     }

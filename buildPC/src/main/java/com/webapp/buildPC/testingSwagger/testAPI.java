@@ -6,9 +6,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("rest/hello")
 public class testAPI {
     @GetMapping
-
     public String hello() {
-
         return "hello world";
     }
     @PostMapping("/post")
