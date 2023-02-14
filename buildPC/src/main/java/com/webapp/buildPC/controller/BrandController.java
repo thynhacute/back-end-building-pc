@@ -16,11 +16,9 @@ import java.util.List;
 @RequestMapping("/brand")
 @RequiredArgsConstructor
 public class BrandController {
-
     private final BrandService brandService;
 
-
-    @GetMapping("/allAllBrand")
+    @GetMapping("/allBrand")
     public ResponseEntity<List<Brand>> getAllBrand(){
         log.debug("Show the list all brands");
         return ResponseEntity.ok().body(brandService.getAllBrands());
