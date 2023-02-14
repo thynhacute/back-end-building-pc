@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.webapp.buildPC.dao.ComponentMapper">
+
+    <select id="getAllComponent" resultType="com.webapp.buildPC.domain.Component">
+        SELECT
+            componentID,
+            componentName,
+            price,
+            amount,
+            image,
+            description,
+            brandID,
+            categoryID,
+            feedbackID,
+            status
+        FROM Component;
+    </select>
+
+    <select id="getComponentByName" resultType="com.webapp.buildPC.domain.Component">
+        SELECT
+        componentID,
+        componentName,
+        price,
+        amount,
+        image,
+        description,
+        brandID,
+        categoryID,
+        feedbackID,
+        status
+        FROM Component
+                WHERE componentName like CONCAT('%', #{componentName}, '%');
+    </select>
+
+    <select id="getComponentByBrand" resultType="com.webapp.buildPC.domain.Component">
+        SELECT
+        componentID,
+        componentName,
+        price,
+        amount,
+        image,
+        description,
+        brandID,
+        categoryID,
+        feedbackID,
+        status
+        FROM Component
+        WHERE brandID = #{brandID};
+    </select>
+
+</mapper>
+

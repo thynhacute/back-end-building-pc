@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.webapp.buildPC.dao.CategoryMapper">
+
+    <resultMap id="CategoryMap" type="com.webapp.buildPC.domain.Category">
+        <result column="categoryID" jdbcType="VARCHAR" property="categoryID"/>
+        <result column="categoryName" property="categoryName"/>
+        <result column="categoryTypeID" jdbcType="VARCHAR" property="categoryTypeID"/>
+    </resultMap>
+
+    <select id="getAllCategory" resultType="com.webapp.buildPC.domain.Category">
+        SELECT  categoryID,
+                categoryName,
+                categoryTypeID
+        FROM Category
+    </select>
+
+    <select id="getCategoryByCategoryTypeID" parameterType="String" resultMap="CategoryMap" >
+        Select  categoryID,
+                categoryName,
+                categoryTypeID
+        FROM Category WHERE categoryTypeID = #{categoryTypeID}
+    </select>
+
+</mapper>
+
