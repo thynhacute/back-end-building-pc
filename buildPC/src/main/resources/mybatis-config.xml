@@ -9,6 +9,13 @@
     </settings>
 
     <mappers>
+        <mapper resource="mapper/BrandMapper.xml"></mapper>
+
+        <mapper resource="mapper/CategoryTypeMapper.xml"></mapper>
+
+        <mapper resource="mapper/CategoryMapper.xml"></mapper>
+
+        <mapper resource="mapper/ComponentMapper.xml"></mapper>
 
     </mappers>
 </configuration>
