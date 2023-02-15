@@ -51,7 +51,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/swagger-resources/configuration/security",
                 "/brand/**",
                 "/categoryType/**",
-                "/category/**"
+                "/category/**",
+                "/upload",
+                "/notification/token"
         ).permitAll();
         http.authorizeRequests().antMatchers(GET,"/component/**").permitAll();
         http.authorizeRequests().antMatchers(POST,"/component/buyComponent/**").hasAnyAuthority("ROLE_USER");
