@@ -26,7 +26,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@Order(1)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -38,22 +37,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter =  new CustomAuthenticationFilter(authenticationManagerBean());
-        customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.authorizeRequests().antMatchers("/api/login/**",
+        http.authorizeRequests().antMatchers("/login/**",
                 "/login/google",
-                "/api/token/refresh",
+                "/user/token/refresh",
                 "**/swagger-resources/**",
                 "/swagger-ui.html",
                 "/v2/api-docs",
                 "/webjars/**",
                 "/swagger-resources",
                 "/swagger-resources/configuration/ui",
-                "/swagger-resources/configuration/security"
+                "/swagger-resources/configuration/security",
+                "/brand/**",
+                "/categoryType/**",
+                "/category/**"
         ).permitAll();
-        http.authorizeRequests().antMatchers(GET,"/api/users/**").hasAnyAuthority("ROLE_USER");
-        http.authorizeRequests().antMatchers(POST,"/api/users/save/**").hasAnyAuthority("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(GET,"/component/**").permitAll();
+        http.authorizeRequests().antMatchers(POST,"/component/buyComponent/**").hasAnyAuthority("ROLE_USER");
+        http.authorizeRequests().antMatchers(POST,"/component/addComponent/**").hasAnyAuthority("ROLE_ADMIN");
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);

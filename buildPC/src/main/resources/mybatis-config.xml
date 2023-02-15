@@ -17,5 +17,10 @@
 
         <mapper resource="mapper/ComponentMapper.xml"></mapper>
 
+        <mapper resource="mapper/UserMapper.xml"></mapper>
+
+        <mapper resource="mapper/RoleMapper.xml"></mapper>
+
+
     </mappers>
 </configuration>
