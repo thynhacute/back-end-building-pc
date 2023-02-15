@@ -17,7 +17,7 @@ public class configSwagger {
         return new Docket(DocumentationType.SWAGGER_2).groupName("public-api")
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.webapp.buildPC.testingSwagger"))
+                .apis(RequestHandlerSelectors.basePackage("com.webapp.buildPC.controller"))
                 .build();
     }
     private ApiInfo apiInfo(){
