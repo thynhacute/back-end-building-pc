@@ -2,6 +2,7 @@ package com.webapp.buildPC.controller;
 
 import com.webapp.buildPC.service.impl.UploadFileServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 public class UploadController {
