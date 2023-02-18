@@ -40,7 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/login/**",
-                "/login/google",
+                "/user/test",
+                "/user/token/google",
                 "/user/token/refresh",
                 "**/swagger-resources/**",
                 "/swagger-ui.html",

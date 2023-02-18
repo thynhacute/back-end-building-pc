@@ -48,6 +48,17 @@ public class UserServiceImp implements UserService, UserDetailsService {
         return userMapper.findUserById(userID);
     }
 
+    @Override
+    public User findUserByEmail(String email) {
+        return userMapper.findUserByEmail(email);
+    }
 
+    @Override
+    public User createUserByNotFound(User user) {
+        user.setPassword(passwordEncoder.encode("1"));
+        user.setRoleID(2);
+        userMapper.createUserByNotFound(user);
+        return user;
+    }
 }
 

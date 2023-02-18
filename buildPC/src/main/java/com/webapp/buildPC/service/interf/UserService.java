@@ -9,4 +9,9 @@ public interface UserService {
 
     User findUserByID(String userID);
 
+    User findUserByEmail(String email);
+
+    User createUserByNotFound(User user);
+
+
 }

@@ -17,4 +17,6 @@ public class User {
     private String image;
     private int roleID;
     private int status;
+
+
 }

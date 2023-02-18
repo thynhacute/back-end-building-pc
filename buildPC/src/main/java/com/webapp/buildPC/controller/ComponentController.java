@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/component")
 @RequiredArgsConstructor
@@ -15,17 +16,17 @@ public class ComponentController {
 
     private final ComponentService componentService;
 
-    @GetMapping("/getAllComponent")
+    @GetMapping("/allComponent")
     public ResponseEntity<List<Component>> getAllComponent(){
         return ResponseEntity.ok().body(componentService.getAllComponent());
     }
 
-    @GetMapping("/getComponentByName")
+    @GetMapping("/componentByName")
     public ResponseEntity<List<Component>> getComponentByName(@RequestParam String componentName){
         return ResponseEntity.ok().body(componentService.getComponentByName(componentName));
     }
 
-    @GetMapping("/getComponentByBrand")
+    @GetMapping("/componentByBrand")
     public ResponseEntity<List<Component>> getComponentByBrand(@RequestParam String brandID){
         return ResponseEntity.ok().body(componentService.getComponentByBrand(brandID));
     }

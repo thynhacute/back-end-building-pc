@@ -8,4 +8,8 @@ public interface UserMapper {
 
     User findUserById(String userID);
 
+    User findUserByEmail(String email);
+
+    void createUserByNotFound(User user);
+
 }

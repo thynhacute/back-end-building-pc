@@ -5,6 +5,17 @@
 
 <mapper namespace="com.webapp.buildPC.dao.UserMapper">
 
+    <resultMap id="userMap" type="com.webapp.buildPC.domain.User">
+        <result column="userID" jdbcType="VARCHAR" property="userID"/>
+        <result column="userName" property="userName"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="roleID" jdbcType="VARCHAR" property="roleID"/>
+        <result column="status"  property="status"/>
+    </resultMap>
+
+
     <select id="findUserById" resultType="com.webapp.buildPC.domain.User">
         SELECT
         userID,
@@ -18,6 +29,25 @@
         status
         FROM User where userID = #{userID};
     </select>
+
+    <select id="findUserByEmail" resultType="com.webapp.buildPC.domain.User">
+        SELECT
+        userID,
+        userName,
+        phone,
+        email,
+        facebook,
+        password,
+        image,
+        roleID,
+        status
+        FROM User where email = #{email};
+    </select>
+
+    <insert id="createUserByNotFound" parameterType="com.webapp.buildPC.domain.User">
+        insert into User (userID,userName,password, image, email, roleID, status)
+        values (#{userID},#{userName},#{password}, #{image},#{email}, #{roleID},#{status})
+    </insert>
 
 </mapper>
 
