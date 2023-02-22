@@ -22,12 +22,12 @@ public class ComponentController {
     }
 
     @GetMapping("/componentByName")
-    public ResponseEntity<List<Component>> getComponentByName(@RequestParam String componentName){
+    public ResponseEntity<List<Component>> getComponentByName(@RequestBody String componentName){
         return ResponseEntity.ok().body(componentService.getComponentByName(componentName));
     }
 
     @GetMapping("/componentByBrand")
-    public ResponseEntity<List<Component>> getComponentByBrand(@RequestParam String brandID){
+    public ResponseEntity<List<Component>> getComponentByBrand(@RequestBody String brandID){
         return ResponseEntity.ok().body(componentService.getComponentByBrand(brandID));
     }
 
