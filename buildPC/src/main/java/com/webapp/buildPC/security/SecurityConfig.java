@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests().antMatchers("/login/**",
+                "/user/login/user",
                 "/user/test",
                 "/user/token/google",
                 "/user/token/refresh",
