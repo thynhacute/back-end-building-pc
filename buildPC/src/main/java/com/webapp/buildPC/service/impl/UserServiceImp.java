@@ -3,6 +3,7 @@ package com.webapp.buildPC.service.impl;
 import com.webapp.buildPC.dao.RoleMapper;
 import com.webapp.buildPC.dao.UserMapper;
 import com.webapp.buildPC.domain.Role;
+import com.webapp.buildPC.domain.Transaction.ResponseUser;
 import com.webapp.buildPC.domain.User;
 import com.webapp.buildPC.service.interf.RoleService;
 import com.webapp.buildPC.service.interf.UserService;
@@ -59,6 +60,11 @@ public class UserServiceImp implements UserService, UserDetailsService {
         user.setRoleID(2);
         userMapper.createUserByNotFound(user);
         return user;
+    }
+
+    @Override
+    public ResponseUser responseUserByID(String userID) {
+        return userMapper.responseUserByID(userID);
     }
 }
 

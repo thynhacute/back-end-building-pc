@@ -40,17 +40,15 @@ public class UploadFileServiceImpl implements UploadFileService {
     public String uploadImage(MultipartFile file) throws IOException {
         Path tempFile = Files.createTempFile("image", file.getOriginalFilename());
         Files.copy(file.getInputStream(), tempFile, StandardCopyOption.REPLACE_EXISTING);
-
         Storage storage = StorageOptions.newBuilder()
                 .setCredentials(GoogleCredentials.fromStream(new FileInputStream(FIREBASE_KEY_FILE_LOCATION)))
                 .build()
                 .getService();
         Bucket bucket = storage.get(FIREBASE_STORAGE_BUCKET);
-
         String imageUrl = String.format("gs://%s/%s", FIREBASE_STORAGE_BUCKET, tempFile.getFileName());
         bucket.create(tempFile.getFileName().toString(), new FileInputStream(tempFile.toFile()), "image/jpeg");
-
-        return imageUrl;
+        String publicUrl = String.format("https://firebasestorage.googleapis.com/v0/b/" + FIREBASE_STORAGE_BUCKET + "/o/" + tempFile.getFileName() + "?alt=media");
+        return publicUrl;
     }
 
 }

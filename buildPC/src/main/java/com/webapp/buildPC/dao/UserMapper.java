@@ -1,5 +1,6 @@
 package com.webapp.buildPC.dao;
 
+import com.webapp.buildPC.domain.Transaction.ResponseUser;
 import com.webapp.buildPC.domain.User;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,4 +13,5 @@ public interface UserMapper {
 
     void createUserByNotFound(User user);
 
+    ResponseUser responseUserByID(String userID);
 }

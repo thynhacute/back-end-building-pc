@@ -8,13 +8,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.webapp.buildPC.domain.Role;
 import com.webapp.buildPC.domain.TokenRequest;
+import com.webapp.buildPC.domain.Transaction.DataResponseToken;
+import com.webapp.buildPC.domain.Transaction.ResponseUser;
 import com.webapp.buildPC.domain.User;
 import com.webapp.buildPC.service.interf.RoleService;
 import com.webapp.buildPC.service.interf.UserService;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController
@@ -124,11 +123,11 @@ public class UserController {
     }
 
     @PostMapping ("/token/google")
-    public void tokenGoogle(@RequestBody String token ,HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void tokenGoogle(@RequestBody String accessToken ,HttpServletRequest request, HttpServletResponse response) throws IOException {
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                TokenRequest tokenRequest = mapper.readValue(token, TokenRequest.class);
-                String tokenValue = tokenRequest.getToken();
+                TokenRequest tokenRequest = mapper.readValue(accessToken, TokenRequest.class);
+                String tokenValue = tokenRequest.getAccessToken();
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 FirebaseToken decodedToken = auth.verifyIdToken(tokenValue);
                 String name = decodedToken.getEmail();
@@ -159,8 +158,11 @@ public class UserController {
                         .withClaim("roles",
                                 Arrays.asList(role.getRoleName()))
                         .sign(algorithm);
-                Map<String, String> tokens = new HashMap<>();
+                ResponseUser responseUser = userService.responseUserByID(user.getUserID());
+                System.out.println(responseUser);
+                Map<String, Object> tokens = new HashMap<>();
                 tokens.put("access_token", access_token);
+                tokens.put("User", responseUser);
 //                tokens.put("refresh_token", tokenValue);
                 response.setContentType("application/json");
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);

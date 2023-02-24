@@ -30,6 +30,19 @@
         FROM User where userID = #{userID};
     </select>
 
+    <select id="responseUserByID" resultType="com.webapp.buildPC.domain.Transaction.ResponseUser">
+        SELECT
+        userID,
+        userName,
+        phone,
+        email,
+        facebook,
+        image,
+        roleName,
+        status
+        FROM User, Role WHERE user.roleID = role.roleID AND userID = #{userID};
+    </select>
+
     <select id="findUserByEmail" resultType="com.webapp.buildPC.domain.User">
         SELECT
         userID,
