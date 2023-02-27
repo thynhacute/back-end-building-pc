@@ -14,5 +14,5 @@ public interface ComponentMapper {
 
     List<Component> getComponentByBrand(String brandID);
 
-
+    void addComponent(Component component);
 }
