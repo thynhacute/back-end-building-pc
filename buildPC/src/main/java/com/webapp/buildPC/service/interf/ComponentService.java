@@ -1,7 +1,6 @@
 package com.webapp.buildPC.service.interf;
 
 import com.webapp.buildPC.domain.Component;
-import com.webapp.buildPC.domain.Transaction.AddComponentRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

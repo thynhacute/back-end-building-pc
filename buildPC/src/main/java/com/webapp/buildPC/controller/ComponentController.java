@@ -1,7 +1,6 @@
 package com.webapp.buildPC.controller;
 
 import com.webapp.buildPC.domain.Component;
-import com.webapp.buildPC.domain.Transaction.AddComponentRequest;
 import com.webapp.buildPC.service.interf.ComponentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
