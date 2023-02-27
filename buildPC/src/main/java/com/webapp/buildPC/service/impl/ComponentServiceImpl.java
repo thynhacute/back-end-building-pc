@@ -2,7 +2,6 @@ package com.webapp.buildPC.service.impl;
 
 import com.webapp.buildPC.dao.ComponentMapper;
 import com.webapp.buildPC.domain.Component;
-import com.webapp.buildPC.domain.Transaction.AddComponentRequest;
 import com.webapp.buildPC.service.interf.ComponentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
