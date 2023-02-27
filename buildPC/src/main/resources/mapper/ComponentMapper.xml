@@ -52,5 +52,10 @@
         WHERE brandID = #{brandID};
     </select>
 
+    <insert id="addComponent" useGeneratedKeys="true" keyProperty="componentID" parameterType="com.webapp.buildPC.domain.Component" >
+        insert into Component (componentID, componentName, price, amount, image, description, brandID, categoryID, status)
+        values (#{componentID},#{componentName},#{price}, #{amount},#{image}, #{description},#{brandID},#{categoryID}, #{status} )
+    </insert>
+
 </mapper>
 
