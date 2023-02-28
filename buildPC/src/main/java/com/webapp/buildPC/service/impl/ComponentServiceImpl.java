@@ -6,6 +6,7 @@ import com.webapp.buildPC.service.interf.ComponentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -41,15 +42,41 @@ public class ComponentServiceImpl implements ComponentService {
     public Component addComponent(String componentName, int price, int amount, MultipartFile avatar, String description, int brandID, String categoryID) throws IOException {
         log.debug("add new component' information");
         Component component = new Component();
-        component.setComponentName(componentName);
-        component.setPrice(price);
-        component.setAmount(amount);
-        component.setImage(uploadFile.uploadImage(avatar));
-        component.setDescription(description);
-        component.setBrandID(brandID);
-        component.setCategoryID(categoryID);
-        component.setStatus(1);
-        componentMapper.addComponent(component);
+        try {
+            component.setComponentName(componentName);
+            component.setPrice(price);
+            component.setAmount(amount);
+            component.setImage(uploadFile.uploadImage(avatar));
+            component.setDescription(description);
+            component.setBrandID(brandID);
+            component.setCategoryID(categoryID);
+            component.setStatus(1);
+            componentMapper.addComponent(component);
+        }catch (Exception e){
+            log.error("The add component error: " + e);
+        }
+        return component;
+    }
+
+    @Override
+    @Transactional
+    public Component editComponent(int componentID, String componentName, int price, int amount, MultipartFile avatar, String description, int brandID, String categoryID) throws IOException {
+        log.debug("Edit component' information");
+        Component component = new Component();
+        try {
+            component.setComponentID(componentID);
+            component.setComponentName(componentName);
+            component.setPrice(price);
+            component.setAmount(amount);
+            component.setImage(uploadFile.uploadImage(avatar));
+            component.setDescription(description);
+            component.setBrandID(brandID);
+            component.setCategoryID(categoryID);
+            component.setStatus(1);
+            componentMapper.editComponent(component);
+        }catch (Exception e){
+            log.error("The edit component error: " + e);
+        }
         return component;
     }
 }

@@ -41,7 +41,7 @@ public class UserController {
     private final RoleService roleService;
 
     private final AuthenticationManager authenticationManager;
-    @PostMapping("/login/user")
+    @PostMapping("/loginUser")
     public void loginUser(@RequestParam String username,
                           @RequestParam String password,
                           HttpServletResponse response,
@@ -68,9 +68,11 @@ public class UserController {
                     .withClaim("roles",
                             Arrays.asList(role.getRoleName()))
                     .sign(algorithm);
-            Map<String, String> tokens = new HashMap<>();
+            ResponseUser responseUser = userService.responseUserByID(user.getUserID());
+            Map<String, Object> tokens = new HashMap<>();
             tokens.put("access_token", access_token);
             tokens.put("refresh_token", refresh_token);
+            tokens.put("User", responseUser);
             response.setContentType("application/json");
             new ObjectMapper().writeValue(response.getOutputStream(), tokens);
         }catch (Exception e){
@@ -159,7 +161,6 @@ public class UserController {
                                 Arrays.asList(role.getRoleName()))
                         .sign(algorithm);
                 ResponseUser responseUser = userService.responseUserByID(user.getUserID());
-                System.out.println(responseUser);
                 Map<String, Object> tokens = new HashMap<>();
                 tokens.put("access_token", access_token);
                 tokens.put("User", responseUser);
