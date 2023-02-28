@@ -5,6 +5,19 @@
 
 <mapper namespace="com.webapp.buildPC.dao.ComponentMapper">
 
+    <resultMap id = "resultMap" type = "com.webapp.buildPC.domain.Component">
+        <result property = "componentID" column = "componentID"/>
+        <result property = "componentName" column = "componentName"/>
+        <result property = "price" column = "price"/>
+        <result property = "amount" column = "amount"/>
+        <result property = "image" column = "image"/>
+        <result property = "description" column = "description"/>
+        <result property = "brandID" column = "brandID"/>
+        <result property = "categoryID" column = "categoryID"/>
+        <result property = "feedbackID" column = "feedbackID"/>
+        <result property = "status" column = "status"/>
+    </resultMap>
+
     <select id="getAllComponent" resultType="com.webapp.buildPC.domain.Component">
         SELECT
             componentID,
@@ -56,6 +69,19 @@
         insert into Component (componentID, componentName, price, amount, image, description, brandID, categoryID, status)
         values (#{componentID},#{componentName},#{price}, #{amount},#{image}, #{description},#{brandID},#{categoryID}, #{status} )
     </insert>
+
+    <update id = "editComponent" parameterType = "com.webapp.buildPC.domain.Component">
+        UPDATE Component SET componentName = #{componentName},
+                                price = #{price},
+                                amount = #{amount},
+                                image = #{image},
+                                description = #{description},
+                                brandID = #{brandID},
+                                categoryID = #{categoryID},
+                                status = #{status}
+                                WHERE componentID = #{componentID};
+    </update>
+
 
 </mapper>
 

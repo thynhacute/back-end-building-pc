@@ -21,6 +21,8 @@
 
         <mapper resource="mapper/RoleMapper.xml"></mapper>
 
+        <mapper resource="mapper/AttributeMapper.xml"></mapper>
+
 
     </mappers>
 </configuration>
