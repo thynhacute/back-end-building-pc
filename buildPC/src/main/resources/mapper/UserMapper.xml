@@ -62,5 +62,11 @@
         values (#{userID},#{userName},#{password}, #{image},#{email}, #{roleID},#{status})
     </insert>
 
+    <insert id="updateProfileUser" parameterType="com.webapp.buildPC.domain.User">
+        UPDATE User
+        SET amount = #{amount}
+        WHERE cartID = #{cartID} AND componentID = #{componentID}
+    </insert>
+
 </mapper>
 

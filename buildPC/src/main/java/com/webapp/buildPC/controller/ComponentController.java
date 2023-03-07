@@ -55,7 +55,7 @@ public class ComponentController {
 
 
     @PostMapping("/buyComponent")
-    public String buyComponent() {
-        return "The page for user";
+    public String buyComponent(int componentID) {
+        return "helloword";
     }
 }

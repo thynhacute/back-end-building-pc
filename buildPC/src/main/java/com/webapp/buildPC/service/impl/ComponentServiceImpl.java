@@ -79,4 +79,9 @@ public class ComponentServiceImpl implements ComponentService {
         }
         return component;
     }
+    @Override
+    public Component getComponentDetail(int componentID) {
+        log.debug("Show The Component Detail");
+        return componentMapper.getComponentDetail(componentID);
+    }
 }

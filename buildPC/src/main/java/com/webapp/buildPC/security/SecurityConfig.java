@@ -56,6 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/upload",
                 "/notification/token",
                 "/attribute/allAttribute"
+                "/notification/token",
+                "/cart/**"
         ).permitAll();
         http.authorizeRequests().antMatchers(GET,"/component/**").permitAll();
         http.authorizeRequests().antMatchers(POST,"/component/buyComponent/**").hasAnyAuthority("ROLE_USER");

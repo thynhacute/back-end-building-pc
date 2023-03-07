@@ -21,8 +21,9 @@
 
         <mapper resource="mapper/RoleMapper.xml"></mapper>
 
+        <mapper resource="mapper/CartDetailMapper.xml"></mapper>
         <mapper resource="mapper/AttributeMapper.xml"></mapper>
 
-
+        <mapper resource="mapper/CartMapper.xml"></mapper>
     </mappers>
 </configuration>

@@ -15,6 +15,7 @@ public interface ComponentService {
     List<Component> getComponentByBrand(String brandID);
 
     Component addComponent(String componentName, int price, int amount, MultipartFile avatar, String description, int brandID, String categoryID) throws IOException;
+    Component getComponentDetail(int componentID);
 
     Component editComponent(int componentID, String componentName, int price, int amount, MultipartFile avatar, String description, int brandID, String categoryID) throws IOException;
 

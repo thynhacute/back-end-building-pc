@@ -9,5 +9,5 @@ public interface CategoryService {
     List<Category> getAllCategory();
 
     List<Category> getCategoryByCategoryTypeID(String cateTypeID);
-
+    Category getCategoryByCategoryID(String categoryID);
 }
