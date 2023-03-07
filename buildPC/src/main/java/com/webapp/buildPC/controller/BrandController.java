@@ -4,11 +4,9 @@ import com.webapp.buildPC.domain.Brand;
 import com.webapp.buildPC.service.interf.BrandService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +22,23 @@ public class BrandController {
     public ResponseEntity<List<Brand>> getAllBrand(){
         log.debug("Show the list all brands");
         return ResponseEntity.ok().body(brandService.getAllBrands());
+    }
+
+    @PostMapping("/redisBrand")
+    public ResponseEntity<String> saveBrand(@RequestBody Brand brand){
+        boolean result = brandService.saveBrand(brand);
+        if(result)
+            return ResponseEntity.ok("Brand Create Successfully");
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @GetMapping("/redisFetchAll")
+    public ResponseEntity<List<Brand>> fetchAllBrand(){
+        List<Brand> brands;
+        brands = brandService.fetchAllBrand();
+        return ResponseEntity.ok(brands);
     }
 
 
