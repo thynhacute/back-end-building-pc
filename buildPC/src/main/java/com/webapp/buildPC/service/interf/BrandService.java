@@ -8,4 +8,8 @@ public interface BrandService {
 
     List<Brand> getAllBrands();
 
+    boolean saveBrand(Brand brand);
+
+    List<Brand> fetchAllBrand();
+
 }
