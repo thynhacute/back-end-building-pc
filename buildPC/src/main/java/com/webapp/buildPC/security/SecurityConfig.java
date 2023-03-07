@@ -55,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/category/**",
                 "/upload",
                 "/notification/token",
-                "/attribute/allAttribute"
+                "/attribute/allAttribute",
                 "/notification/token",
                 "/cart/**"
         ).permitAll();

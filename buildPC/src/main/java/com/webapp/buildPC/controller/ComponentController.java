@@ -58,4 +58,10 @@ public class ComponentController {
     public String buyComponent(int componentID) {
         return "helloword";
     }
+
+    @GetMapping("/componentDetail")
+    public ResponseEntity<Component> getComponentDetail(@RequestParam int componentID){
+        return ResponseEntity.ok().body(componentService.getComponentDetail(componentID));
+    }
+    
 }

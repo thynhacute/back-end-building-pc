@@ -17,5 +17,5 @@ public interface ComponentMapper {
     void addComponent(Component component);
 
     void editComponent(Component component);
-
+    Component getComponentDetail(int componentID);
 }

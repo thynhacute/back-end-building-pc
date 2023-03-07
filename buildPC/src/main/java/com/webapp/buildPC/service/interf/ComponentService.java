@@ -20,4 +20,5 @@ public interface ComponentService {
     Component editComponent(int componentID, String componentName, int price, int amount, MultipartFile avatar, String description, int brandID, String categoryID) throws IOException;
 
 
+
 }
