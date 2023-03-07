@@ -46,4 +46,10 @@ public class BrandServiceImpl implements BrandService {
         brands = redisTemplate.opsForHash().values(HASH_KEY);
         return brands;
     }
+
+    @Override
+    public Brand findBrandByID(int brandid) {
+        log.debug("find brand by id brand");
+        return brandMapper.findBrandByID(brandid);
+    }
 }

@@ -24,6 +24,12 @@
                 categoryTypeID
         FROM Category WHERE categoryTypeID = #{categoryTypeID}
     </select>
+    <select id="getCategoryByCategoryID" parameterType="String" resultType="com.webapp.buildPC.domain.Category">
+        Select  categoryID,
+        categoryName,
+        categoryTypeID
+        FROM Category WHERE categoryID = #{categoryID}
+    </select>
 
 </mapper>
 

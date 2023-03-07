@@ -27,4 +27,10 @@ public class CategorySeviceImpl implements CategoryService {
         log.debug("Get the List Category By Type");
         return categoryMapper.getCategoryByCategoryTypeID(cateTypeID);
     }
+
+    @Override
+    public Category getCategoryByCategoryID(String categoryID) {
+        log.debug("Get the category by category ID");
+        return categoryMapper.getCategoryByCategoryID(categoryID);
+    }
 }

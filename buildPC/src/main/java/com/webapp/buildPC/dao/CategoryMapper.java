@@ -11,7 +11,7 @@ public interface CategoryMapper {
     List<Category> getAllCategory();
 
     List<Category> getCategoryByCategoryTypeID(String categoryTypeID);
-
+    Category getCategoryByCategoryID(String categoryID);
 
 
 }

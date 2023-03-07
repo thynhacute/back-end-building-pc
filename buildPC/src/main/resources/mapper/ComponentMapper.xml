@@ -69,6 +69,21 @@
         insert into Component (componentID, componentName, price, amount, image, description, brandID, categoryID, status)
         values (#{componentID},#{componentName},#{price}, #{amount},#{image}, #{description},#{brandID},#{categoryID}, #{status} )
     </insert>
+    <select id="getComponentDetail" resultType="com.webapp.buildPC.domain.Component">
+        SELECT
+        componentID,
+        componentName,
+        price,
+        amount,
+        image,
+        description,
+        brandID,
+        categoryID,
+        feedbackID,
+        status
+        FROM Component
+        WHERE componentID = #{componentID};
+    </select>
 
     <update id = "editComponent" parameterType = "com.webapp.buildPC.domain.Component">
         UPDATE Component SET componentName = #{componentName},

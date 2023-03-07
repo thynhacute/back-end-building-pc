@@ -12,5 +12,13 @@
         FROM Brand;
     </select>
 
+    <select id="findBrandByID" resultType="com.webapp.buildPC.domain.Brand">
+        SELECT
+            brandID,
+            brandName,
+            description
+        FROM Brand WHERE brandID = #{brandID}
+    </select>
+
 </mapper>
 

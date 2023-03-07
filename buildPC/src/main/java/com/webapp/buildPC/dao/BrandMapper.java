@@ -10,4 +10,6 @@ public interface BrandMapper {
 
     List<Brand> getAllBrand();
 
+    Brand findBrandByID(int brandid);
+
 }

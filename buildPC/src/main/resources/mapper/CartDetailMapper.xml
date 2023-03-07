@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webapp.buildPC.dao.CartDetailMapper">
+
+    <resultMap id="CartDetailMap" type="com.webapp.buildPC.domain.CartDetail">
+        <result column="cartID" property="cartID"/>
+        <result column="productID" property="productID"/>
+        <result column="componentID" property="componentID"/>
+        <result column="amount" property="amount"/>
+    </resultMap>
+
+    <insert id="insertComponentCartDetail" parameterType="com.webapp.buildPC.domain.CartDetail">
+        insert into CartDetail(cartID,productID,componentID,amount)
+        values (#{cartID},#{productID},#{componentID},#{amount})
+    </insert>
+
+    <select id="findCartDetailByCartID" parameterType="Integer" resultMap="CartDetailMap">
+        SELECT
+            cartID,
+            productID,
+            componentID,
+            amount
+        FROM CartDetail WHERE cartID = #{cartID}
+    </select>
+
+    <insert id="updateAmountForProduct" parameterType="com.webapp.buildPC.domain.CartDetail">
+        UPDATE CartDetail
+        SET amount = #{amount}
+        WHERE cartID = #{cartID} AND productID = #{productID}
+    </insert>
+
+    <insert id="updateAmountForComponent" parameterType="com.webapp.buildPC.domain.CartDetail">
+        UPDATE CartDetail
+        SET amount = #{amount}
+        WHERE cartID = #{cartID} AND componentID = #{componentID}
+    </insert>
+
+    <select id="getLastCartDetail" parameterType="com.webapp.buildPC.domain.CartDetail" resultType="com.webapp.buildPC.domain.CartDetail">
+        SELECT LAST_INSERT_ID() AS cartID, #{productID} AS productID,
+        #{componentID} AS componentID, #{amount} AS amount
+    </select>
+
+    <delete id="deleteComponent" parameterType="com.webapp.buildPC.domain.CartDetail">
+        DELETE FROM CartDetail WHERE cartID = #{cartID} AND componentID = #{componentID};
+    </delete>
+</mapper>

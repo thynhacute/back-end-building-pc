@@ -7,6 +7,7 @@ import java.util.List;
 public interface BrandService {
 
     List<Brand> getAllBrands();
+    Brand findBrandByID(int brandid);
 
     boolean saveBrand(Brand brand);
 
