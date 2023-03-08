@@ -23,7 +23,6 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public List<Brand> getAllBrands() {
-        redisTemplate.opsForHash().values(HASH_KEY);
         log.debug("The list of all brands");
         return brandMapper.getAllBrand();
     }
