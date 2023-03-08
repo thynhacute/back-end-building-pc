@@ -41,5 +41,20 @@ public class BrandController {
         return ResponseEntity.ok(brands);
     }
 
+    @GetMapping("/redisFindById/{id}")
+    public ResponseEntity<Object> fetchBrandById(@PathVariable("id") int brandID){
+        return ResponseEntity.ok(brandService.fetchBrandById(brandID));
+    }
+
+    @DeleteMapping("/redisDeleteBrand/{id}")
+    public ResponseEntity<String> deleteBrandRedis(@PathVariable("id") int brandID){
+        boolean result = brandService.deleteBrandRedis(brandID);
+        if(result)
+            return ResponseEntity.ok("Brand Delete Successfully");
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 
 }
