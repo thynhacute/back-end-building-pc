@@ -51,4 +51,22 @@ public class BrandServiceImpl implements BrandService {
         log.debug("find brand by id brand");
         return brandMapper.findBrandByID(brandid);
     }
+
+    public Object fetchBrandById(int brandID) {
+        String id = String.valueOf(brandID);
+        Object brand = redisTemplate.opsForHash().get(HASH_KEY, id);
+        return brand;
+    }
+
+    @Override
+    public boolean deleteBrandRedis(int brandID) {
+        String id = String.valueOf(brandID);
+        try {
+            redisTemplate.opsForHash().delete(HASH_KEY, id);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
