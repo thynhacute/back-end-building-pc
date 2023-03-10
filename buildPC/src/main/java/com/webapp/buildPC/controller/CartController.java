@@ -3,8 +3,13 @@ package com.webapp.buildPC.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webapp.buildPC.domain.*;
+import com.webapp.buildPC.domain.Transaction.CartGetByUserID;
+import com.webapp.buildPC.domain.Transaction.CartParam;
+import com.webapp.buildPC.domain.Transaction.DeleteComponentFromCart;
 import com.webapp.buildPC.domain.Transaction.ResponeNewInserCart;
 import com.webapp.buildPC.service.interf.*;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.MimeTypeUtils;
@@ -32,14 +37,12 @@ public class CartController {
     private final CategoryService categoryService;
 
     @PostMapping("/add")
-    public void insertComponent(@RequestBody String cartParam, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void insertComponent(@RequestBody CartParam cartParam, HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            CartRequest cartData = mapper.readValue(cartParam, CartRequest.class);
-            String userID = cartData.getUserID();
-            String productID = cartData.getProductID();
-            int componentID = cartData.getComponentID();
-            int amount = cartData.getAmount();
+            String userID = cartParam.getUserID();
+            String productID = cartParam.getProductID();
+            int componentID = cartParam.getComponentID();
+            int amount = cartParam.getAmount();
             Cart cart = cartService.searchCartByUserID(userID);
             if (cart == null) {
                 cartService.insertToCart(userID);
@@ -136,13 +139,11 @@ public class CartController {
             }
     }
     @PostMapping("/updateamount")
-    public void updateAmount(@RequestBody String updateParam, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        CartRequest cartData = mapper.readValue(updateParam, CartRequest.class);
-        String userID = cartData.getUserID();
-        int componentID = cartData.getComponentID();
-        String productID = cartData.getProductID();
-        int amount = cartData.getAmount();
+    public void updateAmount(@RequestBody CartParam updateParam, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userID = updateParam.getUserID();
+        int componentID = updateParam.getComponentID();
+        String productID = updateParam.getProductID();
+        int amount = updateParam.getAmount();
         Cart cart = cartService.searchCartByUserID(userID);
         List<ResponeNewInserCart> detailCart = new ArrayList<>();
         Map<String, Object> responseCartDetail = new HashMap<>();
@@ -171,12 +172,11 @@ public class CartController {
             }
         }
     }
+
     @PostMapping("/removecomponent")
-    public void deleteComponent(@RequestBody String deleteParam) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        CartRequest cartData = mapper.readValue(deleteParam, CartRequest.class);
-        String userID = cartData.getUserID();
-        int componentID = cartData.getComponentID();
+    public void deleteComponent(@RequestBody DeleteComponentFromCart deleteParam) throws JsonProcessingException {
+        String userID = deleteParam.getUserID();
+        int componentID = deleteParam.getComponentID();
         Cart cart = cartService.searchCartByUserID(userID);
         List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
         if(cartDetail!=null){
@@ -188,11 +188,9 @@ public class CartController {
             }
         }
     }
-    @GetMapping("/getcart")
-    public void getAllCartByUser(@RequestBody String cartParam,HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        CartRequest cartData = mapper.readValue(cartParam, CartRequest.class);
-        String userID = cartData.getUserID();
+    @PostMapping("/getcart")
+    public void getAllCartByUser(@RequestBody CartGetByUserID userIDparam, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userID = userIDparam.getUserID();
         Cart cart = cartService.searchCartByUserID(userID);
         List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
         List<ResponeNewInserCart> detailCart = new ArrayList<>();
