@@ -55,29 +55,20 @@ public class ComponentServiceImpl implements ComponentService {
         }catch (Exception e){
             log.error("The add component error: " + e);
         }
-        return component;
+        return getComponentDetail(component.getComponentID());
     }
 
     @Override
     @Transactional
-    public Component editComponent(int componentID, String componentName, int price, int amount, MultipartFile avatar, String description, int brandID, String categoryID) throws IOException {
+    public Component editComponent(Component component) throws IOException {
         log.debug("Edit component' information");
-        Component component = new Component();
         try {
-            component.setComponentID(componentID);
-            component.setComponentName(componentName);
-            component.setPrice(price);
-            component.setAmount(amount);
-            component.setImage(uploadFile.uploadImage(avatar));
-            component.setDescription(description);
-            component.setBrandID(brandID);
-            component.setCategoryID(categoryID);
             component.setStatus(1);
             componentMapper.editComponent(component);
         }catch (Exception e){
             log.error("The edit component error: " + e);
         }
-        return component;
+        return getComponentDetail(component.getComponentID());
     }
     @Override
     public Component getComponentDetail(int componentID) {
