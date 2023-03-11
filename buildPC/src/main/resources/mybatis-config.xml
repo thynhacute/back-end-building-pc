@@ -22,8 +22,13 @@
         <mapper resource="mapper/RoleMapper.xml"></mapper>
 
         <mapper resource="mapper/CartDetailMapper.xml"></mapper>
+
         <mapper resource="mapper/AttributeMapper.xml"></mapper>
 
         <mapper resource="mapper/CartMapper.xml"></mapper>
+
+        <mapper resource="mapper/BillMapper.xml"></mapper>
+
+        <mapper resource="mapper/BillDetailMapper.xml"></mapper>
     </mappers>
 </configuration>
