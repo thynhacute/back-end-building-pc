@@ -73,6 +73,12 @@ public class ComponentServiceImpl implements ComponentService {
     }
 
     @Override
+    public void updateAmountForComponent(int componentID, int amount) {
+        log.debug("Update amount for component");
+        componentMapper.updateAmountForComponent(componentID,amount);
+    }
+
+    @Override
     public Component getComponentDetail(int componentID) {
         log.debug("Show The Component Detail");
         return componentMapper.getComponentDetail(componentID);

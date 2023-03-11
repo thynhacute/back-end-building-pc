@@ -20,6 +20,7 @@ public interface ComponentService {
 
     Component editComponent(Component component) throws IOException;
 
+    void updateAmountForComponent(int componentID,int amount);
     List<Component> customComponentByAttribute(RequestComponentByAttribute requestComponentByAttribute);
 
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webapp.buildPC.dao.BillDetailMapper">
+
+
+    <resultMap id="BillDetailMap" type="com.webapp.buildPC.domain.BillDetail">
+        <result column="billID" property="billID"/>
+        <result column="productID" property="productID"/>
+        <result column="componentID" property="componentID"/>
+        <result column="amount" property="amount"/>
+    </resultMap>
+
+    <insert id="insertToBillDetail" parameterType="com.webapp.buildPC.domain.BillDetail">
+        INSERT INTO BillDetail (billID,productID,componentID,amount)
+        VALUES ({billId},#{productID},#{componentID},#{amount});
+    </insert>
+
+    <select id="findBillDetailByBillID" parameterType="com.webapp.buildPC.domain.BillDetail" resultMap="BillDetailMap">
+        SELECT
+        billID,
+        productID,
+        componentID,
+        amount
+        FROM BillDetail WHERE billID = #{billID}
+    </select>
+
+    <insert id="updateAmountForComponent" parameterType="com.webapp.buildPC.domain.CartDetail">
+        UPDATE BillDetail
+        SET amount = #{amount}
+        WHERE billID = #{billID} AND componentID = #{componentID}
+    </insert>
+
+</mapper>

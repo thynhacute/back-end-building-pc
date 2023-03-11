@@ -114,9 +114,11 @@
                     and Attribute.attributeID = AttributeComponent.attributeID
                     and Component.categoryID = Category.categoryID
                     and Attribute.attributeID = #{attributeID} and Category.categoryID = #{categoryID}
-
-    </select>
-
+    <insert id="updateAmountForComponent" parameterType="com.webapp.buildPC.domain.CartDetail">
+        UPDATE Component
+        SET amount = #{amount}
+        WHERE componentID = #{componentID}
+    </insert>
 
 </mapper>
 

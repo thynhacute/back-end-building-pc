@@ -8,8 +8,6 @@ import com.webapp.buildPC.domain.Transaction.CartParam;
 import com.webapp.buildPC.domain.Transaction.DeleteComponentFromCart;
 import com.webapp.buildPC.domain.Transaction.ResponeNewInserCart;
 import com.webapp.buildPC.service.interf.*;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.MimeTypeUtils;
@@ -53,16 +51,16 @@ public class CartController {
                 Component compoDetail = componentService.getComponentDetail(cartDetail.getComponentID());
                 String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
                 String category = categoryService.getCategoryByCategoryID(compoDetail.getCategoryID()).getCategoryName();
-                ResponeNewInserCart newInsertCart = new ResponeNewInserCart(compoDetail.getComponentID(), compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category, compoDetail.getStatus());
+                ResponeNewInserCart newInsertCart = new ResponeNewInserCart(compoDetail.getComponentID(), compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category,compoDetail.getImage(), compoDetail.getStatus());
                 LocalDateTime currentDate = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
                 String formattedDate = currentDate.format(formatter);
                 responseCartDetail.put("cartID", cartCreated.getCartID());
                 responseCartDetail.put("UserID", userID);
-                responseCartDetail.put("product detail", newInsertCart);
+                responseCartDetail.put("productDetail", newInsertCart);
                 responseCartDetail.put("Quantity", amount);
-                responseCartDetail.put("Total price", amount * compoDetail.getPrice());
-                responseCartDetail.put("Created cart time", formattedDate);
+                responseCartDetail.put("TotalPrice", amount * compoDetail.getPrice());
+                responseCartDetail.put("CreatedCartTime", formattedDate);
                 response.setContentType("application/json");
                 new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
             } else {
@@ -102,7 +100,7 @@ public class CartController {
                 Component compoDetail = componentService.getComponentDetail(componentID);
                 String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
                 String category = categoryService.getCategoryByCategoryID(compoDetail.getCategoryID()).getCategoryName();
-                ResponeNewInserCart newInsertCart = new ResponeNewInserCart(componentID, compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category, compoDetail.getStatus());
+                ResponeNewInserCart newInsertCart = new ResponeNewInserCart(componentID, compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category, compoDetail.getImage(), compoDetail.getStatus());
                 List<CartDetail> cartDetailAll = cartDetailService.findCartDetailByCartID(cart.getCartID());
                 List<ResponeNewInserCart> detailCart = new ArrayList<>();
                 int amoutALl = 0;
@@ -111,7 +109,7 @@ public class CartController {
                     Component compoDetailAll = componentService.getComponentDetail(item.getComponentID());
                     String brandAll = brandService.findBrandByID(compoDetailAll.getBrandID()).getBrandName();
                     String categoryAll = categoryService.getCategoryByCategoryID(compoDetailAll.getCategoryID()).getCategoryName();
-                    detailCart.add(new ResponeNewInserCart(compoDetailAll.getComponentID(), compoDetailAll.getComponentName(), compoDetailAll.getPrice(), item.getAmount(), compoDetailAll.getDescription(), brandAll, categoryAll, compoDetailAll.getStatus()));
+                    detailCart.add(new ResponeNewInserCart(compoDetailAll.getComponentID(), compoDetailAll.getComponentName(), compoDetailAll.getPrice(), item.getAmount(), compoDetailAll.getDescription(), brandAll, categoryAll, compoDetailAll.getImage(),compoDetailAll.getStatus()));
                     amoutALl = amoutALl + item.getAmount();
                     totallyPrice = totallyPrice + (item.getAmount() * compoDetailAll.getPrice());
                 }
@@ -120,11 +118,11 @@ public class CartController {
                 String formattedDate = currentDate.format(formatter);
                 responseCartDetail.put("cartID", cart.getCartID());
                 responseCartDetail.put("userID", cart.getUserID());
-                responseCartDetail.put("New product just added", newInsertCart);
-                responseCartDetail.put("All product cart", detailCart);
-                responseCartDetail.put("Total amount", amoutALl);
+                responseCartDetail.put("NewProductAdded", newInsertCart);
+                responseCartDetail.put("AllProductCart", detailCart);
+                responseCartDetail.put("TotalAmount", amoutALl);
                 responseCartDetail.put("totallyPrice", totallyPrice);
-                responseCartDetail.put("Update cart time", formattedDate);
+                responseCartDetail.put("UpdateCartTime", formattedDate);
                 response.setContentType("application/json");
                 new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
 
@@ -138,7 +136,7 @@ public class CartController {
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
     }
-    @PostMapping("/updateamount")
+    @PutMapping ("/updateamount")
     public void updateAmount(@RequestBody CartParam updateParam, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String userID = updateParam.getUserID();
         int componentID = updateParam.getComponentID();
@@ -159,12 +157,12 @@ public class CartController {
                         Component componentDetail = componentService.getComponentDetail(componentID);
                         String brand = brandService.findBrandByID(componentDetail.getBrandID()).getBrandName();
                         String category = categoryService.getCategoryByCategoryID(componentDetail.getCategoryID()).getCategoryName();
-                        detailCart.add(new ResponeNewInserCart(componentDetail.getComponentID(), componentDetail.getComponentName(), componentDetail.getPrice(), item.getAmount(),componentDetail.getDescription(), brand, category, componentDetail.getStatus()));
+                        detailCart.add(new ResponeNewInserCart(componentDetail.getComponentID(), componentDetail.getComponentName(), componentDetail.getPrice(), item.getAmount(),componentDetail.getDescription(), brand, category, componentDetail.getImage(),componentDetail.getStatus()));
                         responseCartDetail.put("cartID", item.getCartID());
                         responseCartDetail.put("UserID", userID);
-                        responseCartDetail.put("product was update", detailCart);
+                        responseCartDetail.put("productWasUpdate", detailCart);
                         responseCartDetail.put("Quantity", amount);
-                        responseCartDetail.put("Total price", amount * componentDetail.getPrice());
+                        responseCartDetail.put("TotalPrice", amount * componentDetail.getPrice());
                         response.setContentType("application/json");
                         new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
                     }
@@ -204,18 +202,18 @@ public class CartController {
                  Component componentDetail = componentService.getComponentDetail(item.getComponentID());
                  String brand = brandService.findBrandByID(componentDetail.getBrandID()).getBrandName();
                  String category = categoryService.getCategoryByCategoryID(componentDetail.getCategoryID()).getCategoryName();
-                 detailCart.add(new ResponeNewInserCart(componentDetail.getComponentID(), componentDetail.getComponentName(), componentDetail.getPrice(), item.getAmount(), componentDetail.getDescription(), brand, category, componentDetail.getStatus()));
+                 detailCart.add(new ResponeNewInserCart(componentDetail.getComponentID(), componentDetail.getComponentName(), componentDetail.getPrice(), item.getAmount(), componentDetail.getDescription(), brand, category, componentDetail.getImage(), componentDetail.getStatus()));
                  amount = amount + item.getAmount();
                  price = price + (item.getAmount() * componentDetail.getPrice());
-                 productAmounts.add(new ProductAmount(componentDetail.getComponentName(), item.getAmount(),componentDetail.getPrice(),item.getAmount() * componentDetail.getPrice()));
+                 productAmounts.add(new ProductAmount(componentDetail.getComponentName(), item.getAmount(),componentDetail.getPrice(),item.getAmount() * componentDetail.getPrice(), componentDetail.getImage()));
             }
         }
         responseCartDetail.put("cartID", cart.getCartID());
         responseCartDetail.put("UserID", userID);
         responseCartDetail.put("Product",productAmounts);
-        responseCartDetail.put("Product detail",detailCart);
-        responseCartDetail.put("Total quantity",amount);
-        responseCartDetail.put("Total price", price);
+        responseCartDetail.put("ProductDetail",detailCart);
+        responseCartDetail.put("TotalQuantity",amount);
+        responseCartDetail.put("TotalPrice", price);
         response.setContentType("application/json");
         new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
     }

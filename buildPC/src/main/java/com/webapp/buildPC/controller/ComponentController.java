@@ -43,7 +43,7 @@ public class ComponentController {
 
     @PostMapping("/addComponent")
     public ResponseEntity<Component> addComponent(@RequestParam String componentName, @RequestParam("image")  MultipartFile image,
-                                                      @RequestParam int price, @RequestParam int amount,@RequestParam String description,
+                                                  @RequestParam int price, @RequestParam int amount,@RequestParam String description,
                                                   @RequestParam int brandID, @RequestParam String categoryID) throws IOException {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/component/addComponent")
                 .toUriString());
@@ -56,7 +56,6 @@ public class ComponentController {
                 .toUriString());
         return ResponseEntity.created(uri).body(componentService.editComponent(component));
     }
-
 
     @PostMapping("/buyComponent")
     public String buyComponent(int componentID) {

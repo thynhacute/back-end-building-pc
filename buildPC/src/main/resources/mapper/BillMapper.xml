@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webapp.buildPC.dao.BillMapper">
+
+    <resultMap id="BillMap" type="com.webapp.buildPC.domain.Bill">
+        <result column="billID" property="billID"/>
+        <result column="total" property="status"/>
+        <result column="paymentMethod" property="paymentMethod"/>
+        <result column="paymentDate" property="paymentDate"/>
+        <result column="userID" property="userID"/>
+    </resultMap>
+
+    <insert id="insertToBill" parameterType="com.webapp.buildPC.domain.Bill">
+        INSERT INTO Bill (total,status,paymentMethod,payDate,userID)
+        VALUES (#{total},#{status},#{paymentMethod},#{payDate},#{userID});
+    </insert>
+
+    <select id="searchBillByUserID" parameterType="com.webapp.buildPC.domain.Bill" resultType="BillMap">
+        SELECT
+            billID,
+            total,
+            status,
+            paymentMethod,
+            payDate,
+            userID
+        FROM Bill WHERE userID = #{userID};
+    </select>
+
+    <select id="getLastInsertedBill" resultType="com.webapp.buildPC.domain.Bill">
+        SELECT billID, total, status, paymentMethod, payDate, userID
+        FROM Bill
+        ORDER BY billID DESC
+        LIMIT 1
+    </select>
+</mapper>

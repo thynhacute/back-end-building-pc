@@ -21,4 +21,6 @@ public interface ComponentMapper {
     Component getComponentDetail(int componentID);
 
     List<Component> customComponentByAttribute(String attributeID, String categoryID);
+
+    void updateAmountForComponent(int componentID,int amount);
 }
