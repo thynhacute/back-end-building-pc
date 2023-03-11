@@ -2,6 +2,7 @@ package com.webapp.buildPC.service.impl;
 
 import com.webapp.buildPC.dao.ComponentMapper;
 import com.webapp.buildPC.domain.Component;
+import com.webapp.buildPC.domain.Transaction.RequestComponentByAttribute;
 import com.webapp.buildPC.service.interf.ComponentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,9 +71,16 @@ public class ComponentServiceImpl implements ComponentService {
         }
         return getComponentDetail(component.getComponentID());
     }
+
     @Override
     public Component getComponentDetail(int componentID) {
         log.debug("Show The Component Detail");
         return componentMapper.getComponentDetail(componentID);
+    }
+
+    @Override
+    public List<Component> customComponentByAttribute(RequestComponentByAttribute requestComponentByAttribute) {
+        log.debug("Show The List component for custom PC");
+        return componentMapper.customComponentByAttribute(requestComponentByAttribute.getAttributeID(), requestComponentByAttribute.getCategoryID());
     }
 }

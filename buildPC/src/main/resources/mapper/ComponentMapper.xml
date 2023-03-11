@@ -97,6 +97,26 @@
                                 WHERE componentID = #{componentID};
     </update>
 
+    <select id="customComponentByAttribute" resultType="com.webapp.buildPC.domain.Component">
+        SELECT
+                    Component.componentID,
+                    componentName,
+                    price,
+                    amount,
+                    image,
+                    description,
+                    brandID,
+                    Category.categoryName,
+                    feedbackID,
+                    status
+            FROM Component, Category, AttributeComponent, Attribute
+                    WHERE  Component.componentID = AttributeComponent.componentID
+                    and Attribute.attributeID = AttributeComponent.attributeID
+                    and Component.categoryID = Category.categoryID
+                    and Attribute.attributeID = #{attributeID} and Category.categoryID = #{categoryID}
+
+    </select>
+
 
 </mapper>
 
