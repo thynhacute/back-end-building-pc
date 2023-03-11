@@ -1,6 +1,7 @@
 package com.webapp.buildPC.controller;
 
 import com.webapp.buildPC.domain.Component;
+import com.webapp.buildPC.domain.Transaction.RequestComponentByAttribute;
 import com.webapp.buildPC.service.interf.ComponentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,11 @@ public class ComponentController {
         return ResponseEntity.ok().body(componentService.getComponentByBrand(brandID));
     }
 
+    @GetMapping("/customComponentByAttribute")
+    public ResponseEntity<List<Component>> customComponentByAttribute(@RequestBody RequestComponentByAttribute requestComponentByAttribute){
+        return ResponseEntity.ok().body(componentService.customComponentByAttribute(requestComponentByAttribute));
+    }
+
     @PostMapping("/addComponent")
     public ResponseEntity<Component> addComponent(@RequestParam String componentName, @RequestParam("image")  MultipartFile image,
                                                       @RequestParam int price, @RequestParam int amount,@RequestParam String description,
@@ -61,5 +67,6 @@ public class ComponentController {
     public ResponseEntity<Component> getComponentDetail(@RequestParam int componentID){
         return ResponseEntity.ok().body(componentService.getComponentDetail(componentID));
     }
-    
+
+
 }

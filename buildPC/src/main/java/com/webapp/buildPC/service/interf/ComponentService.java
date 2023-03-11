@@ -1,6 +1,7 @@
 package com.webapp.buildPC.service.interf;
 
 import com.webapp.buildPC.domain.Component;
+import com.webapp.buildPC.domain.Transaction.RequestComponentByAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -19,6 +20,6 @@ public interface ComponentService {
 
     Component editComponent(Component component) throws IOException;
 
-
+    List<Component> customComponentByAttribute(RequestComponentByAttribute requestComponentByAttribute);
 
 }
