@@ -94,12 +94,12 @@ public class BillController {
                         cartDetails) {
                     if(carts.getComponentID()!=0){
                         Component component = componentService.getComponentDetail(carts.getComponentID());
-                        total = 
+//                        total =
                     }
 //                    if(carts.getProductID()!=null)
                 }
             }
-            billService.insertToBill();
+//            billService.insertToBill();
         }
     }
 }
