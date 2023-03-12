@@ -10,4 +10,6 @@ public interface CartMapper {
     Cart searchCartByUserID(String userID);
 
     Cart getLastCart(String userID);
+
+    void deteleCartByUser(String userID);
 }
