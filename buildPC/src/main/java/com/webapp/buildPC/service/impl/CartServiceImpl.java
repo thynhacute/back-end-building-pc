@@ -36,4 +36,10 @@ public class CartServiceImpl implements CartService {
         log.debug("get the last insert cart");
         return cartMapper.getLastCart(userID);
     }
+
+    @Override
+    public void deteleCartByUser(String userID) {
+        log.debug("delete cart by user");
+        cartMapper.deteleCartByUser(userID);
+    }
 }

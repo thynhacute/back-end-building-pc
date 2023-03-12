@@ -33,4 +33,10 @@ public class BillServiceImpl implements BillService {
         log.debug("Get last insert bill");
         return billMapper.getLastInsertedBill();
     }
+
+    @Override
+    public void updateStatusBill(int billID, int status) {
+        log.debug("change bill status");
+        billMapper.updateStatusBill(billID,status);
+    }
 }

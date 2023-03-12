@@ -1,16 +1,20 @@
 package com.webapp.buildPC.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webapp.buildPC.domain.*;
+import com.webapp.buildPC.domain.Transaction.BillRespone;
+import com.webapp.buildPC.domain.Transaction.CartGetByUserID;
 import com.webapp.buildPC.domain.Transaction.ResponeNewInserCart;
 import com.webapp.buildPC.service.interf.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -20,86 +24,171 @@ import java.util.Map;
 public class BillController {
     private final BillService billService;
     private final BillDetailService billDetailService;
-    private final CartService cartService ;
+    private final CartService cartService;
     private final CartDetailService cartDetailService;
     private final ComponentService componentService;
     private final BrandService brandService;
     private final CategoryService categoryService;
-    @PostMapping("/add")
-    public void inserNewBill(@RequestBody String userID){
+
+    @PostMapping("/checkout")
+    public void inserNewBill(@RequestBody CartGetByUserID userIDparam, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userID = userIDparam.getUserID();
         List<Bill> billFound = billService.searchBillByUserID(userID);
         Map<String, Object> responseBillDetail = new HashMap<>();
-        List<ResponeNewInserCart> detailCart = new ArrayList<>();
+        List<ResponeNewInserCart> detailBill = new ArrayList<>();
         boolean check = false;
-        if(billFound!=null) {
-            for (Bill listbillFound: billFound
-             ){
-                if(listbillFound.getStatus() ==  1){
+        if (billFound.size() > 0) {
+            for (Bill listbillFound : billFound
+            ) {
+                if (listbillFound.getStatus() == 1) {
                     check = true;
                     List<BillDetail> billDetail = billDetailService.findBillDetailByBillID(listbillFound.getBillID());
                     Cart cartUser = cartService.searchCartByUserID(userID);
-                    if(cartUser!=null){
+                    if (cartUser != null) {
                         List<CartDetail> cartDetailsUser = cartDetailService.findCartDetailByCartID(cartUser.getCartID());
-                        if(cartDetailsUser!=null){
-                            for (CartDetail cart:
+                        if (cartDetailsUser != null) {
+                            for (CartDetail cart :
                                     cartDetailsUser) {
-                                if(!billDetail.contains(cart)){
-                                    billDetailService.insertToBillDetail(listbillFound.getBillID(), cart.getProductID(),cart.getComponentID(),cart.getAmount());
-                                }else{
-                                    for (BillDetail billDetai:
-                                            billDetail) {
-                                        if(cart.getComponentID() == billDetai.getComponentID()){
-                                            billDetailService.updateAmountForComponent(listbillFound.getBillID(),cart.getComponentID(),cart.getAmount());
-                                        }
-//                                        if(cart.getProductID().equalsIgnoreCase(billDetai.getProductID()){
-//
-//                                        }
-
+                                boolean itemFound = false;
+                                for (BillDetail billDetai :
+                                        billDetail) {
+                                    if (cart.getComponentID() == billDetai.getComponentID()) {
+                                        itemFound = true;
+                                        billDetailService.updateAmountForComponent(billDetai.getBillID(), billDetai.getComponentID(), cart.getAmount());
                                     }
+//                                    if(cart.getProductID().equalsIgnoreCase(billDetai.getProductID()))
+                                }
+                                if (!itemFound) {
+                                    billDetailService.insertToBillDetail(listbillFound.getBillID(), cart.getProductID(), cart.getComponentID(), cart.getAmount());
                                 }
                             }
                         }
                     }
                     int total = 0;
                     List<BillDetail> listBillDetailUpdated = billDetailService.findBillDetailByBillID(listbillFound.getBillID());
-                    for (BillDetail billDetailList:
+                    for (BillDetail billDetailList :
                             listBillDetailUpdated) {
-                        if(billDetailList.getComponentID() != 0){
+                        if (billDetailList.getComponentID() != 0) {
                             Component component = componentService.getComponentDetail(billDetailList.getComponentID());
                             int amount = component.getAmount() - billDetailList.getAmount();
-                            componentService.updateAmountForComponent(billDetailList.getComponentID(),amount);
+                            componentService.updateAmountForComponent(billDetailList.getComponentID(), amount);
                             String brand = brandService.findBrandByID(component.getBrandID()).getBrandName();
                             String category = categoryService.getCategoryByCategoryID(component.getCategoryID()).getCategoryName();
                             int price = billDetailList.getAmount() * component.getPrice();
-                            detailCart.add(new ResponeNewInserCart(billDetailList.getComponentID(),component.getComponentName(),price,billDetailList.getAmount(),component.getDescription(),brand,category,component.getImage(),component.getStatus()));
+                            detailBill.add(new ResponeNewInserCart(billDetailList.getComponentID(), component.getComponentName(), price, billDetailList.getAmount(), component.getDescription(), brand, category, component.getImage(), component.getStatus()));
                             total = total + price;
                         }
 //                        if(billDetailList.getProductID() !=  null)
                     }
 
-                    responseBillDetail.put("billID",listbillFound.getBillID());
-                    responseBillDetail.put("userID",listbillFound.getUserID());
-                    responseBillDetail.put("total",total);
-                    responseBillDetail.put("status",listbillFound.getStatus());
-                    responseBillDetail.put("billDetail",detailCart);
+                    responseBillDetail.put("billID", listbillFound.getBillID());
+                    responseBillDetail.put("userID", listbillFound.getUserID());
+                    responseBillDetail.put("total", total);
+                    responseBillDetail.put("status", listbillFound.getStatus());
+                    responseBillDetail.put("billDetail", detailBill);
+                    response.setContentType("application/json");
+                    new ObjectMapper().writeValue(response.getOutputStream(), responseBillDetail);
                 }
             }
         }
-        if(check == false || billFound == null){
+        if (check == false || billFound.size() == 0) {
             Cart cart = cartService.searchCartByUserID(userID);
-            if(cart!=null){
+            if (cart != null) {
                 int total = 0;
-                List<CartDetail> cartDetails =  cartDetailService.findCartDetailByCartID(cart.getCartID());
-                for (CartDetail carts:
+                List<CartDetail> cartDetails = cartDetailService.findCartDetailByCartID(cart.getCartID());
+                for (CartDetail carts :
                         cartDetails) {
-                    if(carts.getComponentID()!=0){
+                    if (carts.getComponentID() != 0) {
                         Component component = componentService.getComponentDetail(carts.getComponentID());
-//                        total =
+                        total = total + carts.getAmount() * component.getPrice();
                     }
 //                    if(carts.getProductID()!=null)
                 }
+                Calendar calendar = Calendar.getInstance();
+                Date currentDate = calendar.getTime();
+                billService.insertToBill(total, 1, null, currentDate, userID);
+                Bill bill = billService.getLastInsertedBill();
+                for (CartDetail carts :
+                        cartDetails
+                ) {
+                    billDetailService.insertToBillDetail(bill.getBillID(), carts.getProductID(), carts.getComponentID(), carts.getAmount());
+                    Component component = componentService.getComponentDetail(carts.getComponentID());
+                    String brand = brandService.findBrandByID(component.getBrandID()).getBrandName();
+                    String category = categoryService.getCategoryByCategoryID(component.getCategoryID()).getCategoryName();
+                    int price = carts.getAmount() * component.getPrice();
+                    detailBill.add(new ResponeNewInserCart(carts.getComponentID(), component.getComponentName(), price, carts.getAmount(), component.getDescription(), brand, category, component.getImage(), component.getStatus()));
+                }
+                responseBillDetail.put("billID", bill.getBillID());
+                responseBillDetail.put("userID", userID);
+                responseBillDetail.put("total", total);
+                responseBillDetail.put("status", bill.getStatus());
+                responseBillDetail.put("billDetail", detailBill);
+                response.setContentType("application/json");
+                new ObjectMapper().writeValue(response.getOutputStream(), responseBillDetail);
             }
-//            billService.insertToBill();
+
+
+        }
+    }
+
+    @PostMapping("/finishCheckout")
+    public void changeStatus(@RequestBody CartGetByUserID userIDparam) {
+        String userID = userIDparam.getUserID();
+        List<Bill> bill = billService.searchBillByUserID(userID);
+        boolean checkStatusChange = false;
+        for (Bill billList :
+                bill) {
+            if (billList.getStatus() == 1) {
+                billService.updateStatusBill(billList.getBillID(), 2);
+                checkStatusChange = true;
+            }
+        }
+        if (checkStatusChange) {
+            Cart cart = cartService.searchCartByUserID(userID);
+            List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
+            for (CartDetail cartDetailItem:
+                    cartDetail) {
+                cartDetailService.deleteComponent(cartDetailItem.getCartID(),cartDetailItem.getComponentID());
+            }
+            cartService.deteleCartByUser(userID);
+        }
+    }
+
+    @PostMapping("/getBill")
+    public void getBillDetailByUser(@RequestBody CartGetByUserID userIDparam, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userID = userIDparam.getUserID();
+        List<Bill> billFound = billService.searchBillByUserID(userID);
+        Map<String, Object> responseBillDetail = new HashMap<>();
+        List<BillRespone> billResponesList = new ArrayList<>();
+        int billAmount = 0;
+        if (billFound.size() > 0) {
+            for (Bill billItem :
+                    billFound) {
+                List<ResponeNewInserCart> componentDetailList = new ArrayList<>();
+                int total = 0;
+                int amount = 0;
+                List<BillDetail> billDetails = billDetailService.findBillDetailByBillID(billItem.getBillID());
+                for (BillDetail billDetailsItem :
+                        billDetails) {
+                    Component component = componentService.getComponentDetail(billDetailsItem.getComponentID());
+                    String brand = brandService.findBrandByID(component.getBrandID()).getBrandName();
+                    String category = categoryService.getCategoryByCategoryID(component.getCategoryID()).getCategoryName();
+                    componentDetailList.add(new ResponeNewInserCart(billDetailsItem.getComponentID(), component.getComponentName(), component.getPrice(), billDetailsItem.getAmount(), component.getDescription(), brand, category, component.getImage(), component.getStatus()));
+                    total = total + billDetailsItem.getAmount() * component.getPrice();
+                    amount = amount + billDetailsItem.getAmount();
+                }
+                Date date = billItem.getPayDate();
+                long timestamp = date.getTime();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String formattedDate = dateFormat.format(date);
+                billResponesList.add(new BillRespone(billItem.getBillID(),componentDetailList,billItem.getStatus(),total,amount, billItem.getPaymentMethod(),formattedDate));
+                billAmount = billAmount + 1;
+            }
+            responseBillDetail.put("userID",userID);
+            responseBillDetail.put("billAmount",billAmount);
+            responseBillDetail.put("billDetail",billResponesList);
+            response.setContentType("application/json");
+            new ObjectMapper().writeValue(response.getOutputStream(), responseBillDetail);
         }
     }
 }

@@ -7,4 +7,5 @@ public interface CartService {
 
     Cart searchCartByUserID(String userID);
     Cart getLastCart(String userID);
+    void deteleCartByUser(String userID);
 }

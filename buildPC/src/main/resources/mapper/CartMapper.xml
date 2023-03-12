@@ -9,14 +9,18 @@
         VALUES (#{userID});
     </insert>
 
-    <select id="searchCartByUserID" parameterType="com.webapp.buildPC.domain.Cart" resultType="com.webapp.buildPC.domain.Cart">
+    <select id="searchCartByUserID" parameterType="com.webapp.buildPC.domain.Cart"
+            resultType="com.webapp.buildPC.domain.Cart">
         SELECT
-            cartID,
-            userID
+        cartID,
+        userID
         FROM Cart WHERE userID = #{userID};
     </select>
 
-        <select id="getLastCart" parameterType="com.webapp.buildPC.domain.Cart" resultType="com.webapp.buildPC.domain.Cart">
-            SELECT LAST_INSERT_ID() AS cartID, #{userID} AS userID FROM DUAL
-        </select>
+    <select id="getLastCart" parameterType="com.webapp.buildPC.domain.Cart" resultType="com.webapp.buildPC.domain.Cart">
+        SELECT LAST_INSERT_ID() AS cartID, #{userID} AS userID FROM DUAL
+    </select>
+    <delete id="deteleCartByUser" parameterType="String">
+        DELETE from cart WHERE userID = #{userID};
+    </delete>
 </mapper>

@@ -14,7 +14,7 @@
 
     <insert id="insertToBillDetail" parameterType="com.webapp.buildPC.domain.BillDetail">
         INSERT INTO BillDetail (billID,productID,componentID,amount)
-        VALUES ({billId},#{productID},#{componentID},#{amount});
+        VALUES (#{billID},#{productID},#{componentID},#{amount});
     </insert>
 
     <select id="findBillDetailByBillID" parameterType="com.webapp.buildPC.domain.BillDetail" resultMap="BillDetailMap">

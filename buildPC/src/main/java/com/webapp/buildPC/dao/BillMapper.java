@@ -12,4 +12,6 @@ public interface BillMapper {
     List<Bill> searchBillByUserID(String userId);
 
     Bill getLastInsertedBill();
+
+    void updateStatusBill(int billID,int status);
 }
