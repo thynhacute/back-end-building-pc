@@ -36,7 +36,7 @@ public class ComponentController {
         return ResponseEntity.ok().body(componentService.getComponentByBrand(brandID));
     }
 
-    @GetMapping("/customComponentByAttribute")
+    @PostMapping("/customComponentByAttribute")
     public ResponseEntity<List<Component>> customComponentByAttribute(@RequestBody RequestComponentByAttribute requestComponentByAttribute){
         return ResponseEntity.ok().body(componentService.customComponentByAttribute(requestComponentByAttribute));
     }
