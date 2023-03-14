@@ -8,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseToken;
 import com.webapp.buildPC.domain.Role;
 import com.webapp.buildPC.domain.TokenRequest;
-import com.webapp.buildPC.domain.Transaction.DataResponseToken;
 import com.webapp.buildPC.domain.Transaction.ResponseUser;
 import com.webapp.buildPC.domain.User;
 import com.webapp.buildPC.service.interf.RoleService;
@@ -38,6 +37,7 @@ public class UserController {
     private final RoleService roleService;
 
     private final AuthenticationManager authenticationManager;
+
     @PostMapping("/loginUser")
     public void loginUser(@RequestParam String username,
                           @RequestParam String password,
@@ -173,9 +173,14 @@ public class UserController {
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
     }
+
     @GetMapping("/getListUserWithRoleUser")
-    public List<ResponseUser> getListUserWithRoleUser(){
-        return userService.getListUserWithRoleUser();
+    public void getListUserWithRoleUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+         List<ResponseUser> listUser = userService.getListUserWithRoleUser();
+         Map<String, Object> profiles = new HashMap<>();
+         profiles.put("profiles", listUser);
+        response.setContentType("application/json");
+        new ObjectMapper().writeValue(response.getOutputStream(), profiles);
     }
 
 

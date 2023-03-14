@@ -121,5 +121,24 @@
         WHERE componentID = #{componentID}
     </insert>
 
+    <select id="getComponentListByCategoryTypeID" resultType="com.webapp.buildPC.domain.Component">
+        SELECT
+                componentID,
+                componentName,
+                price,
+                amount,
+                image,
+                description,
+                brandID,
+                Category.categoryID,
+                feedbackID,
+                status
+        FROM Component, Category, CategoryType
+                WHERE Component.categoryID = Category.categoryID
+                and CategoryType.categoryTypeID = Category.categoryTypeID
+                and Category.categoryTypeID = #{categoryTypeID}
+    </select>
+
+
 </mapper>
 

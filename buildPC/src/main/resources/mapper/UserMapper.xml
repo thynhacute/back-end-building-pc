@@ -80,5 +80,7 @@
         status
         FROM User, Role where User.roleID = Role.roleID and Role.roleID = 2;
     </select>
+
+
 </mapper>
 

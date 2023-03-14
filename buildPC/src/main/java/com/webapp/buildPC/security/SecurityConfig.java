@@ -41,6 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/login/**",
                 "/user/loginUser",
                 "/user/test",
+                "/user/getListUserWithRoleUser",
                 "/user/token/google",
                 "/user/token/refresh",
                 "**/swagger-resources/**",

@@ -66,6 +66,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
     public ResponseUser responseUserByID(String userID) {
         return userMapper.responseUserByID(userID);
     }
+
     @Override
     public List<ResponseUser> getListUserWithRoleUser() {
         return userMapper.getListUserWithRoleUser();

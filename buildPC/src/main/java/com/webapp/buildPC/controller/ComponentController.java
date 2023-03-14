@@ -67,5 +67,10 @@ public class ComponentController {
         return ResponseEntity.ok().body(componentService.getComponentDetail(componentID));
     }
 
+    @GetMapping("/componentListByCategoryTypeID")
+    public ResponseEntity<List<Component>> getComponentListByCategoryTypeID(@RequestParam String categoryTypeID){
+        return ResponseEntity.ok().body(componentService.getComponentListByCategoryTypeID(categoryTypeID));
+    }
+
 
 }
