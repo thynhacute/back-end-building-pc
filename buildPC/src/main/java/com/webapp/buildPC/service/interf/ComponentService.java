@@ -23,4 +23,5 @@ public interface ComponentService {
     void updateAmountForComponent(int componentID,int amount);
     List<Component> customComponentByAttribute(RequestComponentByAttribute requestComponentByAttribute);
 
+    List<Component> getComponentListByCategoryTypeID(String categoryTypeID);
 }

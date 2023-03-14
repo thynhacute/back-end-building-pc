@@ -89,4 +89,10 @@ public class ComponentServiceImpl implements ComponentService {
         log.debug("Show The List component for custom PC");
         return componentMapper.customComponentByAttribute(requestComponentByAttribute.getAttributeID(), requestComponentByAttribute.getCategoryID());
     }
+
+    @Override
+    public List<Component> getComponentListByCategoryTypeID(String categoryTypeID) {
+        log.debug("Show the list of Components With CategoryType");
+        return componentMapper.getComponentListByCategoryTypeID(categoryTypeID);
+    }
 }
