@@ -14,4 +14,5 @@ public interface BillMapper {
     Bill getLastInsertedBill();
 
     void updateStatusBill(int billID,int status);
+    List<Bill> getBillStatus(int status);
 }

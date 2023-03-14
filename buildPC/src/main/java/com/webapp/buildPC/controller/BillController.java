@@ -3,6 +3,7 @@ package com.webapp.buildPC.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webapp.buildPC.domain.*;
 import com.webapp.buildPC.domain.Transaction.BillRespone;
+import com.webapp.buildPC.domain.Transaction.BillResponeByStatus;
 import com.webapp.buildPC.domain.Transaction.CartGetByUserID;
 import com.webapp.buildPC.domain.Transaction.ResponeNewInserCart;
 import com.webapp.buildPC.service.interf.*;
@@ -154,9 +155,8 @@ public class BillController {
         }
     }
 
-    @PostMapping("/getBill")
-    public void getBillDetailByUser(@RequestBody CartGetByUserID userIDparam, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String userID = userIDparam.getUserID();
+    @GetMapping("/getBill")
+    public void getBillDetailByUser(@RequestParam String userID, HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Bill> billFound = billService.searchBillByUserID(userID);
         Map<String, Object> responseBillDetail = new HashMap<>();
         List<BillRespone> billResponesList = new ArrayList<>();
@@ -177,11 +177,16 @@ public class BillController {
                     total = total + billDetailsItem.getAmount() * component.getPrice();
                     amount = amount + billDetailsItem.getAmount();
                 }
-                Date date = billItem.getPayDate();
-                long timestamp = date.getTime();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                String formattedDate = dateFormat.format(date);
-                billResponesList.add(new BillRespone(billItem.getBillID(),componentDetailList,billItem.getStatus(),total,amount, billItem.getPaymentMethod(),formattedDate));
+                if(billItem.getPayDate() != null) {
+                    Date date = billItem.getPayDate();
+                    long timestamp = date.getTime();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String formattedDate = dateFormat.format(date);
+                    billResponesList.add(new BillRespone(billItem.getBillID(), componentDetailList, billItem.getStatus(), total, amount, billItem.getPaymentMethod(), formattedDate));
+                }
+                else if(billItem.getPayDate() == null){
+                    billResponesList.add(new BillRespone(billItem.getBillID(), componentDetailList, billItem.getStatus(), total, amount, billItem.getPaymentMethod(), null));
+                }
                 billAmount = billAmount + 1;
             }
             responseBillDetail.put("userID",userID);
@@ -191,4 +196,44 @@ public class BillController {
             new ObjectMapper().writeValue(response.getOutputStream(), responseBillDetail);
         }
     }
+    @GetMapping("/getBillByStatusCompleted")
+    public void getBillCompleted(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<Bill> bills = billService.getBillStatus(2);
+        Map<String, Object> responseBillDetail = new HashMap<>();
+        List<BillResponeByStatus> billResponesList = new ArrayList<>();
+        int billAmount = 0;
+        if(bills.size()>0){
+        for (Bill billsItem:
+             bills) {
+            List<ResponeNewInserCart> componentDetailList = new ArrayList<>();
+            int total = 0;
+            int amount = 0;
+            List<BillDetail> billDetails = billDetailService.findBillDetailByBillID(billsItem.getBillID());
+            for (BillDetail billDetailsItem :
+                    billDetails) {
+                Component component = componentService.getComponentDetail(billDetailsItem.getComponentID());
+                String brand = brandService.findBrandByID(component.getBrandID()).getBrandName();
+                String category = categoryService.getCategoryByCategoryID(component.getCategoryID()).getCategoryName();
+                componentDetailList.add(new ResponeNewInserCart(billDetailsItem.getComponentID(), component.getComponentName(), component.getPrice(), billDetailsItem.getAmount(), component.getDescription(), brand, category, component.getImage(), component.getStatus()));
+                total = total + billDetailsItem.getAmount() * component.getPrice();
+                amount = amount + billDetailsItem.getAmount();
+            }
+            if(billsItem.getPayDate() != null) {
+                Date date = billsItem.getPayDate();
+                long timestamp = date.getTime();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String formattedDate = dateFormat.format(date);
+                billResponesList.add(new BillResponeByStatus(billsItem.getBillID(), componentDetailList, billsItem.getUserID(), total, amount, billsItem.getPaymentMethod(), formattedDate));
+            }
+            else if(billsItem.getPayDate() == null){
+                billResponesList.add(new BillResponeByStatus(billsItem.getBillID(), componentDetailList, billsItem.getUserID(), total, amount, billsItem.getPaymentMethod(), null));
+            }
+            billAmount = billAmount + 1;
+        }
+            responseBillDetail.put("status","FinishCheckOut");
+            responseBillDetail.put("billHaveStatus2",billAmount);
+            responseBillDetail.put("billDetail",billResponesList);
+            response.setContentType("application/json");
+            new ObjectMapper().writeValue(response.getOutputStream(), responseBillDetail);
+    }}
 }

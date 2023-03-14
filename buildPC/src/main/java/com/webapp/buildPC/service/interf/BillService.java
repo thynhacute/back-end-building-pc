@@ -11,4 +11,5 @@ public interface BillService {
     List<Bill> searchBillByUserID(String userId);
     Bill getLastInsertedBill();
     void updateStatusBill(int billID,int status);
+    List<Bill> getBillStatus(int status);
 }

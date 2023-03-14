@@ -15,5 +15,6 @@ public interface UserService {
     User createUserByNotFound(User user);
 
     ResponseUser responseUserByID(String userID);
+    List<ResponseUser> getListUserWithRoleUser();
 
 }

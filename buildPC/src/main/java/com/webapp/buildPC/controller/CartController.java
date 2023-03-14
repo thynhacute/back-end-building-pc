@@ -186,35 +186,40 @@ public class CartController {
             }
         }
     }
-    @PostMapping("/getcart")
-    public void getAllCartByUser(@RequestBody CartGetByUserID userIDparam, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String userID = userIDparam.getUserID();
+    @GetMapping("/getcart")
+    public void getAllCartByUser(@RequestParam String userID, HttpServletRequest request, HttpServletResponse response) throws IOException {
         Cart cart = cartService.searchCartByUserID(userID);
-        List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
-        List<ResponeNewInserCart> detailCart = new ArrayList<>();
         Map<String, Object> responseCartDetail = new HashMap<>();
-        List<ProductAmount> productAmounts = new ArrayList<>();
-        int amount = 0;
-        int price = 0;
-        if(cartDetail!=null){
-            for (CartDetail item:
-                 cartDetail) {
-                 Component componentDetail = componentService.getComponentDetail(item.getComponentID());
-                 String brand = brandService.findBrandByID(componentDetail.getBrandID()).getBrandName();
-                 String category = categoryService.getCategoryByCategoryID(componentDetail.getCategoryID()).getCategoryName();
-                 detailCart.add(new ResponeNewInserCart(componentDetail.getComponentID(), componentDetail.getComponentName(), componentDetail.getPrice(), item.getAmount(), componentDetail.getDescription(), brand, category, componentDetail.getImage(), componentDetail.getStatus()));
-                 amount = amount + item.getAmount();
-                 price = price + (item.getAmount() * componentDetail.getPrice());
-                 productAmounts.add(new ProductAmount(componentDetail.getComponentName(), item.getAmount(),componentDetail.getPrice(),item.getAmount() * componentDetail.getPrice(), componentDetail.getImage()));
+        if (cart != null) {
+            List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
+            List<ResponeNewInserCart> detailCart = new ArrayList<>();
+            List<ProductAmount> productAmounts = new ArrayList<>();
+            int amount = 0;
+            int price = 0;
+            if (cartDetail.size() > 0) {
+                for (CartDetail item :
+                        cartDetail) {
+                    Component componentDetail = componentService.getComponentDetail(item.getComponentID());
+                    String brand = brandService.findBrandByID(componentDetail.getBrandID()).getBrandName();
+                    String category = categoryService.getCategoryByCategoryID(componentDetail.getCategoryID()).getCategoryName();
+                    detailCart.add(new ResponeNewInserCart(componentDetail.getComponentID(), componentDetail.getComponentName(), componentDetail.getPrice(), item.getAmount(), componentDetail.getDescription(), brand, category, componentDetail.getImage(), componentDetail.getStatus()));
+                    amount = amount + item.getAmount();
+                    price = price + (item.getAmount() * componentDetail.getPrice());
+                    productAmounts.add(new ProductAmount(componentDetail.getComponentName(), item.getAmount(), componentDetail.getPrice(), item.getAmount() * componentDetail.getPrice(), componentDetail.getImage()));
+                }
             }
+            responseCartDetail.put("cartID", cart.getCartID());
+            responseCartDetail.put("UserID", userID);
+            responseCartDetail.put("Product", productAmounts);
+            responseCartDetail.put("ProductDetail", detailCart);
+            responseCartDetail.put("TotalQuantity", amount);
+            responseCartDetail.put("TotalPrice", price);
+            response.setContentType("application/json");
+            new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
+        }else if(cart==null){
+            responseCartDetail.put("CartStatus", "No componeent added to cart");
+            response.setContentType("application/json");
+            new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
         }
-        responseCartDetail.put("cartID", cart.getCartID());
-        responseCartDetail.put("UserID", userID);
-        responseCartDetail.put("Product",productAmounts);
-        responseCartDetail.put("ProductDetail",detailCart);
-        responseCartDetail.put("TotalQuantity",amount);
-        responseCartDetail.put("TotalPrice", price);
-        response.setContentType("application/json");
-        new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
     }
 }

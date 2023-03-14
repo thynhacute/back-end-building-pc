@@ -59,7 +59,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/notification/token",
                 "/cart/**",
                 "/component/**",
-                "/bill/**"
+                "/bill/**",
+                "/user/getListUserWithRoleUser"
         ).permitAll();
         http.authorizeRequests().antMatchers(POST,"/component/buyComponent/**").hasAnyAuthority("ROLE_USER");
         http.authorizeRequests().antMatchers(POST,"/component/addComponent/**").hasAnyAuthority("ROLE_ADMIN");
