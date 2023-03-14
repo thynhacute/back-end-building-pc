@@ -39,4 +39,10 @@ public class BillServiceImpl implements BillService {
         log.debug("change bill status");
         billMapper.updateStatusBill(billID,status);
     }
+
+    @Override
+    public List<Bill> getBillStatus(int status) {
+        log.debug("get lít bill by status");
+        return billMapper.getBillStatus(status);
+    }
 }

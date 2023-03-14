@@ -42,4 +42,14 @@
         WHERE billID = #{billID}
     </update>
 
+    <select id="getBillStatus" parameterType="com.webapp.buildPC.domain.Bill" resultMap="BillMap">
+        SELECT
+        billID,
+        total,
+        status,
+        paymentMethod,
+        payDate,
+        userID
+        FROM Bill WHERE status = #{status};
+    </select>
 </mapper>

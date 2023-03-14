@@ -68,5 +68,17 @@
         WHERE cartID = #{cartID} AND componentID = #{componentID}
     </insert>
 
+    <select id="getListUserWithRoleUser" resultType="com.webapp.buildPC.domain.Transaction.ResponseUser">
+        SELECT
+        userID,
+        userName,
+        phone,
+        email,
+        facebook,
+        image,
+        roleName,
+        status
+        FROM User, Role where User.roleID = Role.roleID and Role.roleID = 2;
+    </select>
 </mapper>
 

@@ -22,7 +22,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categoryByType")
-    public ResponseEntity<List<Category>> getCategoryByType(@RequestBody String categoryTypeID){
+    public ResponseEntity<List<Category>> getCategoryByType(@RequestParam String categoryTypeID){
         return ResponseEntity.ok().body(categoryService.getCategoryByCategoryTypeID(categoryTypeID));
     }
 

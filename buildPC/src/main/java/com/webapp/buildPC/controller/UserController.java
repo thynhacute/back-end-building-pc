@@ -25,10 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -175,6 +172,10 @@ public class UserController {
                 response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
+    }
+    @GetMapping("/getListUserWithRoleUser")
+    public List<ResponseUser> getListUserWithRoleUser(){
+        return userService.getListUserWithRoleUser();
     }
 
 
