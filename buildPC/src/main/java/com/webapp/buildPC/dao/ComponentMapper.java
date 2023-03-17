@@ -26,4 +26,6 @@ public interface ComponentMapper {
 
     List<Component> getComponentListByCategoryTypeID(String categoryTypeID);
 
+    List<Component> getComponentByCategoryID(String categoryID);
+
 }

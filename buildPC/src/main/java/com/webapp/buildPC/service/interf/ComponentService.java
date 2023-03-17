@@ -24,4 +24,5 @@ public interface ComponentService {
     List<Component> customComponentByAttribute(RequestComponentByAttribute requestComponentByAttribute);
 
     List<Component> getComponentListByCategoryTypeID(String categoryTypeID);
+    List<Component> getComponentByCategoryID(String categoryID);
 }

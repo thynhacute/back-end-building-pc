@@ -2,10 +2,8 @@ package com.webapp.buildPC.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.webapp.buildPC.domain.*;
-import com.webapp.buildPC.domain.Transaction.BillRespone;
-import com.webapp.buildPC.domain.Transaction.BillResponeByStatus;
-import com.webapp.buildPC.domain.Transaction.CartGetByUserID;
-import com.webapp.buildPC.domain.Transaction.ResponeNewInserCart;
+import com.webapp.buildPC.domain.Transaction.*;
+import com.webapp.buildPC.service.impl.PushNotificationService;
 import com.webapp.buildPC.service.interf.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +28,7 @@ public class BillController {
     private final ComponentService componentService;
     private final BrandService brandService;
     private final CategoryService categoryService;
+    private final PushNotificationService pushNotificationService;
 
     @PostMapping("/checkout")
     public void inserNewBill(@RequestBody CartGetByUserID userIDparam, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -71,8 +70,6 @@ public class BillController {
                             listBillDetailUpdated) {
                         if (billDetailList.getComponentID() != 0) {
                             Component component = componentService.getComponentDetail(billDetailList.getComponentID());
-                            int amount = component.getAmount() - billDetailList.getAmount();
-                            componentService.updateAmountForComponent(billDetailList.getComponentID(), amount);
                             String brand = brandService.findBrandByID(component.getBrandID()).getBrandName();
                             String category = categoryService.getCategoryByCategoryID(component.getCategoryID()).getCategoryName();
                             int price = billDetailList.getAmount() * component.getPrice();
@@ -131,7 +128,6 @@ public class BillController {
 
         }
     }
-
     @PostMapping("/finishCheckout")
     public void changeStatus(@RequestBody CartGetByUserID userIDparam) {
         String userID = userIDparam.getUserID();
@@ -152,6 +148,24 @@ public class BillController {
                 cartDetailService.deleteComponent(cartDetailItem.getCartID(),cartDetailItem.getComponentID());
             }
             cartService.deteleCartByUser(userID);
+        }
+        Bill bill1 = billService.getLastInsertedBill();
+        if(bill1!=null){
+            List<BillDetail> billDetails = billDetailService.findBillDetailByBillID(bill1.getBillID());
+            for (BillDetail billDetailItem:
+                 billDetails) {
+                Component component = componentService.getComponentDetail(billDetailItem.getComponentID());
+                int amount = component.getAmount() - billDetailItem.getAmount();
+                componentService.updateAmountForComponent(billDetailItem.getComponentID(), amount);
+                if(amount <= 3){
+                    PushNotificationRequest request = new PushNotificationRequest();
+                    request.setTitle("Test noti");
+                    request.setTopic("Notification when amount <= 3");
+                    request.setMessage("The amount of " + component.getComponentName() +" only left " +amount);
+                    request.setToken("eesG9_KMS5yI5fu7xhQ7Li:APA91bGDWfeGaNENlqjDIAB3a8Zf_4svwlhCbbuy8Okn4Z_G9Eig-Tq9xE90PVMcYaxTODZRAZb4D7JEQ84ta_v-UjVnxpSawwJGDkbUhaUnDrRTAjTNN1JxrpkgX9dtG77l3Lr3UC1-");
+                    pushNotificationService.sendPushNotificationToToken(request);
+                }
+            }
         }
     }
 

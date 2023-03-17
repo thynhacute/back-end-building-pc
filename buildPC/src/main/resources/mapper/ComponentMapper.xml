@@ -139,6 +139,21 @@
                 and Category.categoryTypeID = #{categoryTypeID}
     </select>
 
+    <select id="getComponentByCategoryID" resultType="com.webapp.buildPC.domain.Component">
+        SELECT
+        componentID,
+        componentName,
+        price,
+        amount,
+        image,
+        description,
+        brandID,
+        categoryID,
+        feedbackID,
+        status
+        FROM Component
+        WHERE categoryID = #{categoryID};
+    </select>
 
 </mapper>
 

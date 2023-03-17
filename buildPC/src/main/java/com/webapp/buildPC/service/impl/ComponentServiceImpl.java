@@ -95,4 +95,10 @@ public class ComponentServiceImpl implements ComponentService {
         log.debug("Show the list of Components With CategoryType");
         return componentMapper.getComponentListByCategoryTypeID(categoryTypeID);
     }
+
+    @Override
+    public List<Component> getComponentByCategoryID(String categoryID) {
+        log.debug("Get list component by categoryID");
+        return componentMapper.getComponentByCategoryID(categoryID);
+    }
 }
