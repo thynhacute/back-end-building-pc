@@ -30,5 +30,11 @@
         <mapper resource="mapper/BillMapper.xml"></mapper>
 
         <mapper resource="mapper/BillDetailMapper.xml"></mapper>
+
+        <mapper resource="mapper/ProductMapper.xml"></mapper>
+
+        <mapper resource="mapper/PCDetailMapper.xml"></mapper>
+
+
     </mappers>
 </configuration>

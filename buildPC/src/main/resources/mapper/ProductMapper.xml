@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.webapp.buildPC.dao.ProductMapper">
+
+    <insert id="addProduct" parameterType="com.webapp.buildPC.domain.Product">
+        insert into Product (productID, amount, total)
+        values (#{productID}, #{amount}, #{total})
+    </insert>
+
+    <select id="getAllProducts" resultType="com.webapp.buildPC.domain.Product">
+        SELECT productID, amount, total FROM Product
+    </select>
+
+    <select id="getProductDetail" resultType="com.webapp.buildPC.domain.Product">
+        SELECT productID, amount, total FROM Product WHERE productID = #{productID}
+    </select>
+
+</mapper>
+
