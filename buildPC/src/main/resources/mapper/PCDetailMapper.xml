@@ -14,5 +14,9 @@
         SELECT productID, componentID FROM PCDetail WHERE productID = #{productID}
     </select>
 
+    <delete id="removeProductDetail">
+        DELETE FROM PCDetail WHERE productID = #{productID}
+    </delete>
+
 </mapper>
 

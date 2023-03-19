@@ -14,7 +14,7 @@ import java.util.List;
 public class RequestCustomPC {
     private String productID;
     private List<String> listComponent;
-
+    private String userID;
     private int amount;
 
     private int total;

@@ -13,4 +13,8 @@ public interface ProductService {
     List<ResponseProductDetail> getAllProduct();
 
     ResponseProductDetail getProductDetail(String productID);
+
+    List<ResponseProductDetail> getProductOfUser(String userID);
+
+    void removeProduct(String productID);
 }

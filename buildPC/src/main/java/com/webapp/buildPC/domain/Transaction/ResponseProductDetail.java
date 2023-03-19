@@ -13,7 +13,7 @@ import java.util.List;
 public class ResponseProductDetail {
     private String productID;
     private List<Component> components;
-    private double total;
     private int amount;
+    private double total;
 
 }

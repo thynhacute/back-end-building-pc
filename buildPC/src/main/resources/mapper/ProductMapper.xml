@@ -6,17 +6,27 @@
 <mapper namespace="com.webapp.buildPC.dao.ProductMapper">
 
     <insert id="addProduct" parameterType="com.webapp.buildPC.domain.Product">
-        insert into Product (productID, amount, total)
-        values (#{productID}, #{amount}, #{total})
+        insert into Product (productID, amount, total, userID)
+        values (#{productID}, #{amount}, #{total}, #{userID})
     </insert>
 
     <select id="getAllProducts" resultType="com.webapp.buildPC.domain.Product">
-        SELECT productID, amount, total FROM Product
+        SELECT productID, amount, total FROM Product, User, Role
+                    Where Product.userID = User.userID
+                                AND Role.roleID = User.roleID
+                                AND Role.roleID = 1
     </select>
 
     <select id="getProductDetail" resultType="com.webapp.buildPC.domain.Product">
-        SELECT productID, amount, total FROM Product WHERE productID = #{productID}
+        SELECT productID, amount, total, userID FROM Product WHERE productID = #{productID}
     </select>
 
+    <select id="getProductOfUser" resultType="com.webapp.buildPC.domain.Product">
+        SELECT productID, amount, total, userID FROM Product WHERE userID = #{userID}
+    </select>
+
+    <delete id="removeProduct">
+        DELETE FROM Product WHERE productID = #{productID}
+    </delete>
 </mapper>
 
