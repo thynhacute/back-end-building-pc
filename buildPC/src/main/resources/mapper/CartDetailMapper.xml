@@ -13,9 +13,12 @@
 
     <insert id="insertComponentCartDetail" parameterType="com.webapp.buildPC.domain.CartDetail">
         insert into CartDetail(cartID,productID,componentID,amount)
-        values (#{cartID},#{productID},#{componentID},#{amount})
+        values (#{cartID},#{componentID},#{amount})
     </insert>
-
+    <insert id="insertProductCartDetail" parameterType="com.webapp.buildPC.domain.CartDetail">
+        insert into CartDetail(cartID,productID,amount)
+        values (#{cartID},#{productID},#{amount})
+    </insert>
     <select id="findCartDetailByCartID" parameterType="Integer" resultMap="CartDetailMap">
         SELECT
             cartID,
@@ -44,5 +47,8 @@
 
     <delete id="deleteComponent" parameterType="com.webapp.buildPC.domain.CartDetail">
         DELETE FROM CartDetail WHERE cartID = #{cartID} AND componentID = #{componentID};
+    </delete>
+    <delete id="deleteProduct" parameterType="com.webapp.buildPC.domain.CartDetail">
+        DELETE FROM CartDetail WHERE cartID = #{cartID} AND productID = #{productID}
     </delete>
 </mapper>

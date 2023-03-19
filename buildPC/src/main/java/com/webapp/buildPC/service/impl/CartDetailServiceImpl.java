@@ -14,12 +14,6 @@ import java.util.List;
 public class CartDetailServiceImpl implements CartDetailService {
     private final CartDetailMapper CartDetailMapper;
     @Override
-    public void insertComponentCartDetail(int cartID, String productID, int componentID, int amount) {
-        CartDetailMapper.insertComponentCartDetail(cartID, productID, componentID, amount);
-        log.debug("insert cart to cart detail");
-    }
-
-    @Override
     public List<CartDetail> findCartDetailByCartID(int cartID) {
         log.debug("find cart detail by cartID");
         return CartDetailMapper.findCartDetailByCartID(cartID);
@@ -62,6 +56,24 @@ public class CartDetailServiceImpl implements CartDetailService {
     public void deleteComponent(int cartID, int componentID) {
         log.debug("Delete component");
         CartDetailMapper.deleteComponent(cartID, componentID);
+    }
+
+    @Override
+    public void deleteProduct(int cartID, String productID) {
+        log.debug("Delete productID");
+        CartDetailMapper.deleteProduct(cartID,productID);
+    }
+
+    @Override
+    public void insertComponentCartDetail(int cartID, int componentID, int amount) {
+        log.debug("insert component to cart detail");
+        CartDetailMapper.insertComponentCartDetail(cartID, componentID, amount);
+    }
+
+    @Override
+    public void insertProductCartDetail(int cartID, String productID, int amount) {
+        log.debug("insert productID to cart detail");
+        CartDetailMapper.insertProductCartDetail(cartID, productID, amount);
     }
 
 }

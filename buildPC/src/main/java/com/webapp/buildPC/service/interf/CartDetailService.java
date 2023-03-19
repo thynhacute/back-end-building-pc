@@ -5,7 +5,6 @@ import com.webapp.buildPC.domain.CartDetail;
 import java.util.List;
 
 public interface CartDetailService {
-    void insertComponentCartDetail(int cartID, String productID, int componentID, int amount);
     List<CartDetail> findCartDetailByCartID(int cartID);
     void updateAmountForProduct(int cartID,String productID,int amount);
     void updateAmountForComponent(int cartID, int componentID,int amount);
@@ -14,4 +13,7 @@ public interface CartDetailService {
     CartDetail getLastCartDetail(String productID,int componentID,int amount);
 
     void deleteComponent(int cartID,int componentID);
+    void deleteProduct(int cartID,String productID);
+    void insertComponentCartDetail(int cartID, int componentID, int amount);
+    void insertProductCartDetail(int cartID,String productID, int amount);
 }

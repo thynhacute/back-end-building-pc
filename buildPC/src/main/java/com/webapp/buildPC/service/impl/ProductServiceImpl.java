@@ -12,6 +12,7 @@ import com.webapp.buildPC.service.interf.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
+    @Transactional
     public void addProduct(RequestCustomPC requestCustomPC) {
         String productID = requestCustomPC.getProductID();
         List<String> listComponent = requestCustomPC.getListComponent();

@@ -7,15 +7,15 @@ import java.util.List;
 
 @Mapper
 public interface CartDetailMapper {
-    void insertComponentCartDetail(int cartID, String productID, int componentID, int amount);
+    void insertComponentCartDetail(int cartID, int componentID, int amount);
+    void insertProductCartDetail(int cartID,String productID, int amount);
     List<CartDetail> findCartDetailByCartID(int cartID);
 
     void updateAmountForProduct(int cartID,String productID,int amount);
     void updateAmountForComponent(int cartID, int componentID,int amount);
-//
-//    void addToCartDetail(CartDetail cartDetail);
-//    List<CartDetail> getAllCartDetail();
+
     CartDetail getLastCartDetail(CartDetail cartDetail);
 
     void deleteComponent(int cartID,int componentID);
+    void deleteProduct(int cartID,String productID);
 }

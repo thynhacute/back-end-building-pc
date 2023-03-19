@@ -17,6 +17,5 @@
     <select id="getProductDetail" resultType="com.webapp.buildPC.domain.Product">
         SELECT productID, amount, total FROM Product WHERE productID = #{productID}
     </select>
-
 </mapper>
 

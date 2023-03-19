@@ -14,4 +14,6 @@ public class DeleteComponentFromCart {
 
     @ApiModelProperty(example = "1")
     private int componentID;
+    @ApiModelProperty(example = "product1")
+    private String productID;
 }

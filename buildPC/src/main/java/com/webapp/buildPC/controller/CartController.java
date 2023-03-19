@@ -2,10 +2,7 @@ package com.webapp.buildPC.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.webapp.buildPC.domain.Cart;
-import com.webapp.buildPC.domain.CartDetail;
-import com.webapp.buildPC.domain.Component;
-import com.webapp.buildPC.domain.ProductAmount;
+import com.webapp.buildPC.domain.*;
 import com.webapp.buildPC.domain.Transaction.*;
 import com.webapp.buildPC.service.interf.*;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +31,8 @@ public class CartController {
     private final ComponentService componentService;
     private final BrandService brandService;
     private final CategoryService categoryService;
+    private final ProductService productService;
+    private final PCDetailService pcDetailService;
     @PostMapping("/add")
     public void insertComponent(@RequestBody CartParam cartParam, HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
@@ -43,10 +42,15 @@ public class CartController {
             int amount = cartParam.getAmount();
             Cart cart = cartService.searchCartByUserID(userID);
             if (cart == null) {
+                Map<String, Object> responseCartDetail = new HashMap<>();
                 cartService.insertToCart(userID);
                 Cart cartCreated = cartService.getLastCart(userID);
-                cartDetailService.insertComponentCartDetail(cartCreated.getCartID(), productID, componentID, amount);
-                Map<String, Object> responseCartDetail = new HashMap<>();
+                if(productID!=null){
+                    cartDetailService.insertProductCartDetail(cart.getCartID(),productID,amount);
+                }
+                else{
+                    cartDetailService.insertComponentCartDetail(cart.getCartID(), componentID, amount);
+                }
                 CartDetail cartDetail = cartDetailService.getLastCartDetail(productID, componentID, amount);
                 Component compoDetail = componentService.getComponentDetail(cartDetail.getComponentID());
                 String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
@@ -55,6 +59,7 @@ public class CartController {
                 LocalDateTime currentDate = LocalDateTime.now();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
                 String formattedDate = currentDate.format(formatter);
+                responseCartDetail.put("product", productID);
                 responseCartDetail.put("cartID", cartCreated.getCartID());
                 responseCartDetail.put("UserID", userID);
                 responseCartDetail.put("productDetail", newInsertCart);
@@ -70,164 +75,58 @@ public class CartController {
                 if (cartDetail.size() > 0) {
                     for (CartDetail item :
                             cartDetail) {
-
                         if (productID != null && productID.equalsIgnoreCase(item.getProductID())) {
-                            int amountProduct = item.getAmount() + amount;
-//                        cartDetailService.updateAmountForProduct(userID, item.getProductID(), amountProduct);
-                            //                    Component compoDetail = componentService.getComponentDetail(componentID);
-                            //                    amountBoth.put(compoDetail.getComponentName(),amountProduct);
+                            int amountComponent = item.getAmount() + amount;
+                            cartDetailService.updateAmountForProduct(item.getCartID(),item.getProductID(),amountComponent);
                             check = false;
                         } else if (componentID != 0 && componentID == item.getComponentID()) {
                             int amountComponent = item.getAmount() + amount;
                             cartDetailService.updateAmountForComponent(item.getCartID(), item.getComponentID(), amountComponent);
-                            Component compoDetail = componentService.getComponentDetail(componentID);
                             check = false;
                         }
                     }
                 }
                 if (check) {
-                    cartDetailService.insertComponentCartDetail(cart.getCartID(), productID, componentID, amount);
-                    if (productID != null) {
-
-                    } else {
-                        Component compoDetail = componentService.getComponentDetail(componentID);
+                    if(productID!=null){
+                        cartDetailService.insertProductCartDetail(cart.getCartID(),productID,amount);
+                    }
+                    else{
+                        cartDetailService.insertComponentCartDetail(cart.getCartID(), componentID, amount);
                     }
                 }
-
-                if (productID != null) {
-
-                }
-                Component compoDetail = componentService.getComponentDetail(componentID);
-                String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
-                String category = categoryService.getCategoryByCategoryID(compoDetail.getCategoryID()).getCategoryName();
-                ResponeNewInserCart newInsertCart = new ResponeNewInserCart(componentID, compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category, compoDetail.getImage(), compoDetail.getStatus());
-                List<CartDetail> cartDetailAll = cartDetailService.findCartDetailByCartID(cart.getCartID());
-                List<ResponeNewInserCart> detailCart = new ArrayList<>();
-                int amoutALl = 0;
-                int totallyPrice = 0;
-                for (CartDetail item : cartDetailAll) {
-                    Component compoDetailAll = componentService.getComponentDetail(item.getComponentID());
-                    String brandAll = brandService.findBrandByID(compoDetailAll.getBrandID()).getBrandName();
-                    String categoryAll = categoryService.getCategoryByCategoryID(compoDetailAll.getCategoryID()).getCategoryName();
-                    detailCart.add(new ResponeNewInserCart(compoDetailAll.getComponentID(), compoDetailAll.getComponentName(), compoDetailAll.getPrice(), item.getAmount(), compoDetailAll.getDescription(), brandAll, categoryAll, compoDetailAll.getImage(),compoDetailAll.getStatus()));
-                    amoutALl = amoutALl + item.getAmount();
-                    totallyPrice = totallyPrice + (item.getAmount() * compoDetailAll.getPrice());
-                }
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                LocalDateTime currentDate = LocalDateTime.now();
-                String formattedDate = currentDate.format(formatter);
-                responseCartDetail.put("cartID", cart.getCartID());
-                responseCartDetail.put("userID", cart.getUserID());
-                responseCartDetail.put("NewProductAdded", newInsertCart);
-                responseCartDetail.put("AllProductCart", detailCart);
-                responseCartDetail.put("TotalAmount", amoutALl);
-                responseCartDetail.put("totallyPrice", totallyPrice);
-                responseCartDetail.put("UpdateCartTime", formattedDate);
-                response.setContentType("application/json");
-                new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
-
+//                Component compoDetail = componentService.getComponentDetail(componentID);
+//                String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
+//                String category = categoryService.getCategoryByCategoryID(compoDetail.getCategoryID()).getCategoryName();
+//                ResponeNewInserCart newInsertCart = new ResponeNewInserCart(componentID, compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category, compoDetail.getImage(), compoDetail.getStatus());
+//                List<CartDetail> cartDetailAll = cartDetailService.findCartDetailByCartID(cart.getCartID());
+//                List<ResponeNewInserCart> detailCart = new ArrayList<>();
+//                int amoutALl = 0;
+//                int totallyPrice = 0;
+//                for (CartDetail item : cartDetailAll) {
+//                    Component compoDetailAll = componentService.getComponentDetail(item.getComponentID());
+//                    String brandAll = brandService.findBrandByID(compoDetailAll.getBrandID()).getBrandName();
+//                    String categoryAll = categoryService.getCategoryByCategoryID(compoDetailAll.getCategoryID()).getCategoryName();
+//                    detailCart.add(new ResponeNewInserCart(compoDetailAll.getComponentID(), compoDetailAll.getComponentName(), compoDetailAll.getPrice(), item.getAmount(), compoDetailAll.getDescription(), brandAll, categoryAll, compoDetailAll.getImage(),compoDetailAll.getStatus()));
+//                    amoutALl = amoutALl + item.getAmount();
+//                    totallyPrice = totallyPrice + (item.getAmount() * compoDetailAll.getPrice());
+//                }
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+//                LocalDateTime currentDate = LocalDateTime.now();
+//                String formattedDate = currentDate.format(formatter);
+//                if(productID!=null){
+//                    responseCartDetail.put("productIDadded", productID);
+//                }
+//                responseCartDetail.put("cartID", cart.getCartID());
+//                responseCartDetail.put("userID", cart.getUserID());
+//                responseCartDetail.put("NewProductAdded", newInsertCart);
+//                responseCartDetail.put("AllProductCart", detailCart);
+//                responseCartDetail.put("TotalAmount", amoutALl);
+//                responseCartDetail.put("totallyPrice", totallyPrice);
+//                responseCartDetail.put("UpdateCartTime", formattedDate);
+//                response.setContentType("application/json");
+//                new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
             }
         }catch(Exception e){
-            response.setHeader("error", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            Map<String, String> error = new HashMap<>();
-            error.put("error_message", e.getMessage());
-            response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
-            new ObjectMapper().writeValue(response.getOutputStream(), error);
-        }
-    }
-    @PostMapping("/addCustom")
-    public void insertCustomComponent(@RequestBody ListComponentAddToCart cartParam, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        try {
-            String userID = cartParam.getUserID();
-            List<ListComponent> listComponentList = cartParam.getListComponentList();
-            Cart cart = cartService.searchCartByUserID(userID);
-            Map<String, Object> responseCartDetail = new HashMap<>();
-            List<ResponeNewInserCart> newInsertCart = new ArrayList<>();
-            if (cart == null) {
-                cartService.insertToCart(userID);
-                Cart cartCreated = cartService.getLastCart(userID);
-                int amount = 0;
-                int price = 0;
-                if (listComponentList.size() > 0) {
-                    for (ListComponent component :
-                            listComponentList) {
-                        String productID = component.getProductID();
-                        int componentID = component.getComponentID();
-                        amount = amount + component.getAmount();
-                        cartDetailService.insertComponentCartDetail(cartCreated.getCartID(), productID, componentID, amount);
-                        CartDetail cartDetail = cartDetailService.getLastCartDetail(productID, componentID, amount);
-                        Component compoDetail = componentService.getComponentDetail(cartDetail.getComponentID());
-                        price = price + component.getAmount() * compoDetail.getPrice();
-                        String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
-                        String category = categoryService.getCategoryByCategoryID(compoDetail.getCategoryID()).getCategoryName();
-                        newInsertCart.add(new ResponeNewInserCart(compoDetail.getComponentID(), compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category, compoDetail.getImage(), compoDetail.getStatus()));
-                    }
-                    LocalDateTime currentDate = LocalDateTime.now();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                    String formattedDate = currentDate.format(formatter);
-                    responseCartDetail.put("cartID", cartCreated.getCartID());
-                    responseCartDetail.put("UserID", userID);
-                    responseCartDetail.put("productDetail", newInsertCart);
-                    responseCartDetail.put("Quantity", amount);
-                    responseCartDetail.put("TotalPrice", price);
-                    responseCartDetail.put("CreatedCartTime", formattedDate);
-                    response.setContentType("application/json");
-                    new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
-                }
-            } else {
-                List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
-                boolean check = true;
-                if (cartDetail.size() > 0) {
-                    for (ListComponent component :
-                            listComponentList) {
-                        String productID = component.getProductID();
-                        int componentID = component.getComponentID();
-                        int amount = component.getAmount();
-                        for (CartDetail item :
-                                cartDetail) {
-                            if (componentID != 0 && componentID == item.getComponentID()) {
-                                int amountComponent = item.getAmount() + amount;
-                                cartDetailService.updateAmountForComponent(item.getCartID(), item.getComponentID(), amountComponent);
-                                check = false;
-                            }
-                        }
-                        if (check) {
-                            cartDetailService.insertComponentCartDetail(cart.getCartID(), productID, componentID, amount);
-                        }
-                        Component compoDetail = componentService.getComponentDetail(componentID);
-                        String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
-                        String category = categoryService.getCategoryByCategoryID(compoDetail.getCategoryID()).getCategoryName();
-                        newInsertCart.add(new ResponeNewInserCart(componentID, compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category, compoDetail.getImage(), compoDetail.getStatus()));
-                    }
-                }
-                List<CartDetail> cartDetailAll = cartDetailService.findCartDetailByCartID(cart.getCartID());
-                List<ResponeNewInserCart> detailCart = new ArrayList<>();
-                int amoutALl = 0;
-                int totallyPrice = 0;
-                for (CartDetail item : cartDetailAll) {
-                    Component compoDetailAll = componentService.getComponentDetail(item.getComponentID());
-                    String brandAll = brandService.findBrandByID(compoDetailAll.getBrandID()).getBrandName();
-                    String categoryAll = categoryService.getCategoryByCategoryID(compoDetailAll.getCategoryID()).getCategoryName();
-                    detailCart.add(new ResponeNewInserCart(compoDetailAll.getComponentID(), compoDetailAll.getComponentName(), compoDetailAll.getPrice(), item.getAmount(), compoDetailAll.getDescription(), brandAll, categoryAll, compoDetailAll.getImage(), compoDetailAll.getStatus()));
-                    amoutALl = amoutALl + item.getAmount();
-                    totallyPrice = totallyPrice + (item.getAmount() * compoDetailAll.getPrice());
-                }
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                LocalDateTime currentDate = LocalDateTime.now();
-                String formattedDate = currentDate.format(formatter);
-                responseCartDetail.put("cartID", cart.getCartID());
-                responseCartDetail.put("userID", cart.getUserID());
-                responseCartDetail.put("NewProductAdded", newInsertCart);
-                responseCartDetail.put("AllProductCart", detailCart);
-                responseCartDetail.put("TotalAmount", amoutALl);
-                responseCartDetail.put("totallyPrice", totallyPrice);
-                responseCartDetail.put("UpdateCartTime", formattedDate);
-                response.setContentType("application/json");
-                new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
-
-            }
-        } catch (Exception e) {
             response.setHeader("error", e.getMessage());
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             Map<String, String> error = new HashMap<>();
@@ -253,6 +152,11 @@ public class CartController {
                 ) {
                     if (productID != null && productID.equalsIgnoreCase(item.getProductID())) {
                         cartDetailService.updateAmountForProduct(item.getCartID(), productID, amount);
+                        responseCartDetail.put("cartID", item.getCartID());
+                        responseCartDetail.put("UserID", userID);
+                        responseCartDetail.put("Quantity", amount);
+                        response.setContentType("application/json");
+                        new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
                     } else if (componentID > 0 && componentID == item.getComponentID()) {
                         cartDetailService.updateAmountForComponent(item.getCartID(), componentID, amount);
                         Component componentDetail = componentService.getComponentDetail(componentID);
@@ -272,16 +176,20 @@ public class CartController {
         }
     }
 
-    @PostMapping("/removecomponent")
+    @PostMapping("/remove")
     public void deleteComponent(@RequestBody DeleteComponentFromCart deleteParam) throws JsonProcessingException {
         String userID = deleteParam.getUserID();
         int componentID = deleteParam.getComponentID();
+        String productID = deleteParam.getProductID();
         Cart cart = cartService.searchCartByUserID(userID);
         List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
         if (cartDetail != null) {
             for (CartDetail item :
                     cartDetail) {
-                if (componentID == item.getComponentID()) {
+                if(productID!=null && productID.equalsIgnoreCase(item.getProductID())){
+                    cartDetailService.deleteProduct(item.getCartID(),productID);
+                }
+                if (componentID!= 0 && componentID == item.getComponentID()) {
                     cartDetailService.deleteComponent(item.getCartID(), componentID);
                 }
             }
@@ -294,28 +202,36 @@ public class CartController {
         Map<String, Object> responseCartDetail = new HashMap<>();
         if (cart != null) {
             List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
-            List<ResponeNewInserCart> detailCart = new ArrayList<>();
-            List<ProductAmount> productAmounts = new ArrayList<>();
-            int amount = 0;
-            int price = 0;
+            List<ResponeProduct> products = new ArrayList<>();
+            List<ComponentRespone> componentRespones = new ArrayList<>();
+            int quantity = 0;
             if (cartDetail.size() > 0) {
                 for (CartDetail item :
                         cartDetail) {
-                    Component componentDetail = componentService.getComponentDetail(item.getComponentID());
-                    String brand = brandService.findBrandByID(componentDetail.getBrandID()).getBrandName();
-                    String category = categoryService.getCategoryByCategoryID(componentDetail.getCategoryID()).getCategoryName();
-                    detailCart.add(new ResponeNewInserCart(componentDetail.getComponentID(), componentDetail.getComponentName(), componentDetail.getPrice(), item.getAmount(), componentDetail.getDescription(), brand, category, componentDetail.getImage(), componentDetail.getStatus()));
-                    amount = amount + item.getAmount();
-                    price = price + (item.getAmount() * componentDetail.getPrice());
-                    productAmounts.add(new ProductAmount(componentDetail.getComponentName(), item.getAmount(), componentDetail.getPrice(), item.getAmount() * componentDetail.getPrice(), componentDetail.getImage()));
+                    if(item.getProductID()!=null){
+                        List<String> productDetail = new ArrayList<>();
+                        List<PCDetail> pcDetails = pcDetailService.getPCDetailByProductID(item.getProductID());
+                         ResponseProductDetail product =  productService.getProductDetail(item.getProductID());
+                        for (PCDetail pcDetail:
+                                pcDetails) {
+                            Component component = componentService.getComponentDetail(pcDetail.getComponentID());
+                            productDetail.add(component.getComponentName());
+                        }
+                        products.add(new ResponeProduct(item.getProductID(),productDetail, item.getAmount(), product.getTotal()));
+
+                    }
+                    else {
+                        Component componentDetail = componentService.getComponentDetail(item.getComponentID());
+                        componentRespones.add(new ComponentRespone(item.getComponentID(),componentDetail.getComponentName(),componentDetail.getPrice(),item.getAmount(),componentDetail.getImage()));
+                    }
                 }
+                quantity = quantity + 1;
             }
             responseCartDetail.put("cartID", cart.getCartID());
             responseCartDetail.put("UserID", userID);
-            responseCartDetail.put("Product", productAmounts);
-            responseCartDetail.put("ProductDetail", detailCart);
-            responseCartDetail.put("TotalQuantity", amount);
-            responseCartDetail.put("TotalPrice", price);
+            responseCartDetail.put("product", products);
+            responseCartDetail.put("component", componentRespones);
+            responseCartDetail.put("totalQuantity", quantity);
             response.setContentType("application/json");
             new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
         } else if (cart == null) {
