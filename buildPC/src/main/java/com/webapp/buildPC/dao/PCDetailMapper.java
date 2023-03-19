@@ -13,4 +13,6 @@ public interface PCDetailMapper {
 
 
     List<PCDetail> getPCDetailByProductID(String productID);
+
+    void removeProductDetail(String productID);
 }

@@ -31,5 +31,15 @@ public class ProductController {
         return productService.getProductDetail(productID);
     }
 
+    @GetMapping("/getProductOfUser")
+    public List<ResponseProductDetail> getProductOfUser(@RequestParam String userID){
+        return productService.getProductOfUser(userID);
+    }
+
+    @PostMapping("/removeProduct")
+    public void removeProduct(@RequestParam String productID){
+        productService.removeProduct(productID);
+    }
+
 
 }
