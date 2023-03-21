@@ -46,28 +46,11 @@ public class CartController {
                 cartService.insertToCart(userID);
                 Cart cartCreated = cartService.getLastCart(userID);
                 if(productID!=null){
-                    cartDetailService.insertProductCartDetail(cart.getCartID(),productID,amount);
+                    cartDetailService.insertProductCartDetail(cartCreated.getCartID(),productID,amount);
                 }
                 else{
-                    cartDetailService.insertComponentCartDetail(cart.getCartID(), componentID, amount);
+                    cartDetailService.insertComponentCartDetail(cartCreated.getCartID(), componentID, amount);
                 }
-                CartDetail cartDetail = cartDetailService.getLastCartDetail(productID, componentID, amount);
-                Component compoDetail = componentService.getComponentDetail(cartDetail.getComponentID());
-                String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
-                String category = categoryService.getCategoryByCategoryID(compoDetail.getCategoryID()).getCategoryName();
-                ResponeNewInserCart newInsertCart = new ResponeNewInserCart(compoDetail.getComponentID(), compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category,compoDetail.getImage(), compoDetail.getStatus());
-                LocalDateTime currentDate = LocalDateTime.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                String formattedDate = currentDate.format(formatter);
-                responseCartDetail.put("product", productID);
-                responseCartDetail.put("cartID", cartCreated.getCartID());
-                responseCartDetail.put("UserID", userID);
-                responseCartDetail.put("productDetail", newInsertCart);
-                responseCartDetail.put("Quantity", amount);
-                responseCartDetail.put("TotalPrice", amount * compoDetail.getPrice());
-                responseCartDetail.put("CreatedCartTime", formattedDate);
-                response.setContentType("application/json");
-                new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
             } else {
                 List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
                 Map<String, Object> responseCartDetail = new HashMap<>();
@@ -94,37 +77,6 @@ public class CartController {
                         cartDetailService.insertComponentCartDetail(cart.getCartID(), componentID, amount);
                     }
                 }
-//                Component compoDetail = componentService.getComponentDetail(componentID);
-//                String brand = brandService.findBrandByID(compoDetail.getBrandID()).getBrandName();
-//                String category = categoryService.getCategoryByCategoryID(compoDetail.getCategoryID()).getCategoryName();
-//                ResponeNewInserCart newInsertCart = new ResponeNewInserCart(componentID, compoDetail.getComponentName(), compoDetail.getPrice(), amount, compoDetail.getDescription(), brand, category, compoDetail.getImage(), compoDetail.getStatus());
-//                List<CartDetail> cartDetailAll = cartDetailService.findCartDetailByCartID(cart.getCartID());
-//                List<ResponeNewInserCart> detailCart = new ArrayList<>();
-//                int amoutALl = 0;
-//                int totallyPrice = 0;
-//                for (CartDetail item : cartDetailAll) {
-//                    Component compoDetailAll = componentService.getComponentDetail(item.getComponentID());
-//                    String brandAll = brandService.findBrandByID(compoDetailAll.getBrandID()).getBrandName();
-//                    String categoryAll = categoryService.getCategoryByCategoryID(compoDetailAll.getCategoryID()).getCategoryName();
-//                    detailCart.add(new ResponeNewInserCart(compoDetailAll.getComponentID(), compoDetailAll.getComponentName(), compoDetailAll.getPrice(), item.getAmount(), compoDetailAll.getDescription(), brandAll, categoryAll, compoDetailAll.getImage(),compoDetailAll.getStatus()));
-//                    amoutALl = amoutALl + item.getAmount();
-//                    totallyPrice = totallyPrice + (item.getAmount() * compoDetailAll.getPrice());
-//                }
-//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-//                LocalDateTime currentDate = LocalDateTime.now();
-//                String formattedDate = currentDate.format(formatter);
-//                if(productID!=null){
-//                    responseCartDetail.put("productIDadded", productID);
-//                }
-//                responseCartDetail.put("cartID", cart.getCartID());
-//                responseCartDetail.put("userID", cart.getUserID());
-//                responseCartDetail.put("NewProductAdded", newInsertCart);
-//                responseCartDetail.put("AllProductCart", detailCart);
-//                responseCartDetail.put("TotalAmount", amoutALl);
-//                responseCartDetail.put("totallyPrice", totallyPrice);
-//                responseCartDetail.put("UpdateCartTime", formattedDate);
-//                response.setContentType("application/json");
-//                new ObjectMapper().writeValue(response.getOutputStream(), responseCartDetail);
             }
         }catch(Exception e){
             response.setHeader("error", e.getMessage());
@@ -215,7 +167,7 @@ public class CartController {
                         for (PCDetail pcDetail:
                                 pcDetails) {
                             Component component = componentService.getComponentDetail(pcDetail.getComponentID());
-                            productDetail.add(component.getComponentName());
+                            productDetail.add(component.getCategoryID() + " : "+ component.getComponentName());
                         }
                         products.add(new ResponeProduct(item.getProductID(),productDetail, item.getAmount(), product.getTotal()));
 
@@ -224,8 +176,9 @@ public class CartController {
                         Component componentDetail = componentService.getComponentDetail(item.getComponentID());
                         componentRespones.add(new ComponentRespone(item.getComponentID(),componentDetail.getComponentName(),componentDetail.getPrice(),item.getAmount(),componentDetail.getImage()));
                     }
+                    quantity = quantity + 1;
                 }
-                quantity = quantity + 1;
+
             }
             responseCartDetail.put("cartID", cart.getCartID());
             responseCartDetail.put("UserID", userID);

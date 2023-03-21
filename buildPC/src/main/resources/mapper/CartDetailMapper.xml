@@ -12,7 +12,7 @@
     </resultMap>
 
     <insert id="insertComponentCartDetail" parameterType="com.webapp.buildPC.domain.CartDetail">
-        insert into CartDetail(cartID,productID,componentID,amount)
+        insert into CartDetail(cartID,componentID,amount)
         values (#{cartID},#{componentID},#{amount})
     </insert>
     <insert id="insertProductCartDetail" parameterType="com.webapp.buildPC.domain.CartDetail">

@@ -94,14 +94,6 @@ public class BillController {
             if (cart != null) {
                 int total = 0;
                 List<CartDetail> cartDetails = cartDetailService.findCartDetailByCartID(cart.getCartID());
-                for (CartDetail carts :
-                        cartDetails) {
-                    if (carts.getComponentID() != 0) {
-                        Component component = componentService.getComponentDetail(carts.getComponentID());
-                        total = total + carts.getAmount() * component.getPrice();
-                    }
-//                    if(carts.getProductID()!=null)
-                }
                 Calendar calendar = Calendar.getInstance();
                 Date currentDate = calendar.getTime();
                 billService.insertToBill(total, 1, null, currentDate, userID);
@@ -115,6 +107,7 @@ public class BillController {
                     String category = categoryService.getCategoryByCategoryID(component.getCategoryID()).getCategoryName();
                     int price = carts.getAmount() * component.getPrice();
                     detailBill.add(new ResponeNewInserCart(carts.getComponentID(), component.getComponentName(), price, carts.getAmount(), component.getDescription(), brand, category, component.getImage(), component.getStatus()));
+                    total = total + carts.getAmount() * component.getPrice();
                 }
                 responseBillDetail.put("billID", bill.getBillID());
                 responseBillDetail.put("userID", userID);
