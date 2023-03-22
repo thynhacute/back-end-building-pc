@@ -19,5 +19,6 @@ public interface ProductService {
     List<ResponseProductDetail> getProductOfUser(String userID);
 
     void removeProduct(String productID);
+    void updateProductAmount(String productID,int amount);
 
 }

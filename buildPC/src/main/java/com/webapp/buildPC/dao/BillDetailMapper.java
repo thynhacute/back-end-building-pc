@@ -6,7 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 @Mapper
 public interface BillDetailMapper {
-    void insertToBillDetail(int billID,String productID,int componentID,int amount);
     List<BillDetail> findBillDetailByBillID(int billID);
     void updateAmountForComponent (int billID,int componentID,int amount);
+    void insertComponentToBillDetail(int billID,int componentID,int amount);
+    void insertProductToBillDetail(int billID,String productID,int amount);
 }

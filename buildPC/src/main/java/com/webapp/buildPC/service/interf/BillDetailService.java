@@ -5,7 +5,8 @@ import com.webapp.buildPC.domain.BillDetail;
 import java.util.List;
 
 public interface BillDetailService {
-    void insertToBillDetail(int billID,String productID,int componentID,int amount);
     List<BillDetail> findBillDetailByBillID(int billID);
     void updateAmountForComponent (int billID,int componentID,int amount);
+    void insertComponentToBillDetail(int billID,int componentID,int amount);
+    void insertProductToBillDetail(int billID,String productID,int amount);
 }

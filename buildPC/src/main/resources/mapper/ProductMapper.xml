@@ -36,5 +36,10 @@
     <delete id="removeProduct">
         DELETE FROM Product WHERE productID = #{productID}
     </delete>
+    <update id="updateProductAmount" parameterType="com.webapp.buildPC.domain.Product">
+        UPDATE Product
+        SET amount = #{amount}
+        WHERE productID = #{productID}
+    </update>
 </mapper>
 

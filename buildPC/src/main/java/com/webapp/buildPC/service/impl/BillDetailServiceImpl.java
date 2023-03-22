@@ -13,11 +13,6 @@ import java.util.List;
 @Slf4j
 public class BillDetailServiceImpl implements BillDetailService {
     private final BillDetailMapper billDetailMapper ;
-    @Override
-    public void insertToBillDetail(int billID, String productID, int componentID, int amount) {
-        log.debug("inser to bill detail");
-        billDetailMapper.insertToBillDetail(billID,productID,componentID,amount);
-    }
 
     @Override
     public List<BillDetail> findBillDetailByBillID(int billID) {
@@ -29,5 +24,17 @@ public class BillDetailServiceImpl implements BillDetailService {
     public void updateAmountForComponent(int billID, int componentID, int amount) {
         log.debug("update amount for component");
         billDetailMapper.updateAmountForComponent(billID ,componentID ,amount );
+    }
+
+    @Override
+    public void insertComponentToBillDetail(int billID, int componentID, int amount) {
+        log.debug("insert component to bill detail");
+        billDetailMapper.insertComponentToBillDetail(billID, componentID, amount);
+    }
+
+    @Override
+    public void insertProductToBillDetail(int billID, String productID, int amount) {
+        log.debug("insert prodcut to bill detail");
+        billDetailMapper.insertProductToBillDetail(billID, productID, amount);
     }
 }

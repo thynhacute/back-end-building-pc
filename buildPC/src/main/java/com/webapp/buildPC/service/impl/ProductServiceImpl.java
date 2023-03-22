@@ -100,6 +100,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void updateProductAmount(String productID, int amount) {
+        log.debug("update product amount");
+        productMapper.updateProductAmount(productID,amount);
+    }
+    @Override
     @Transactional
     public void updateProduct(RequestCustomPC requestCustomPC) {
         String productID = requestCustomPC.getProductID();

@@ -7,6 +7,7 @@ import com.webapp.buildPC.service.impl.PushNotificationService;
 import com.webapp.buildPC.service.interf.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,96 +30,60 @@ public class BillController {
     private final BrandService brandService;
     private final CategoryService categoryService;
     private final PushNotificationService pushNotificationService;
+    private final ProductService productService;
 
     @PostMapping("/checkout")
-    public void inserNewBill(@RequestBody CartGetByUserID userIDparam, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String userID = userIDparam.getUserID();
-        List<Bill> billFound = billService.searchBillByUserID(userID);
+    public void inserNewBill(@RequestParam String userID,@RequestParam int total, HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, Object> responseBillDetail = new HashMap<>();
-        List<ResponeNewInserCart> detailBill = new ArrayList<>();
-        boolean check = false;
-        if (billFound.size() > 0) {
-            for (Bill listbillFound : billFound
-            ) {
-                if (listbillFound.getStatus() == 1) {
-                    check = true;
-                    List<BillDetail> billDetail = billDetailService.findBillDetailByBillID(listbillFound.getBillID());
-                    Cart cartUser = cartService.searchCartByUserID(userID);
-                    if (cartUser != null) {
-                        List<CartDetail> cartDetailsUser = cartDetailService.findCartDetailByCartID(cartUser.getCartID());
-                        if (cartDetailsUser != null) {
-                            for (CartDetail cart :
-                                    cartDetailsUser) {
-                                boolean itemFound = false;
-                                for (BillDetail billDetai :
-                                        billDetail) {
-                                    if (cart.getComponentID() == billDetai.getComponentID()) {
-                                        itemFound = true;
-                                        billDetailService.updateAmountForComponent(billDetai.getBillID(), billDetai.getComponentID(), cart.getAmount());
-                                    }
-//                                    if(cart.getProductID().equalsIgnoreCase(billDetai.getProductID()))
-                                }
-                                if (!itemFound) {
-                                    billDetailService.insertToBillDetail(listbillFound.getBillID(), cart.getProductID(), cart.getComponentID(), cart.getAmount());
-                                }
-                            }
-                        }
-                    }
-                    int total = 0;
-                    List<BillDetail> listBillDetailUpdated = billDetailService.findBillDetailByBillID(listbillFound.getBillID());
-                    for (BillDetail billDetailList :
-                            listBillDetailUpdated) {
-                        if (billDetailList.getComponentID() != 0) {
-                            Component component = componentService.getComponentDetail(billDetailList.getComponentID());
-                            String brand = brandService.findBrandByID(component.getBrandID()).getBrandName();
-                            String category = categoryService.getCategoryByCategoryID(component.getCategoryID()).getCategoryName();
-                            int price = billDetailList.getAmount() * component.getPrice();
-                            detailBill.add(new ResponeNewInserCart(billDetailList.getComponentID(), component.getComponentName(), price, billDetailList.getAmount(), component.getDescription(), brand, category, component.getImage(), component.getStatus()));
-                            total = total + price;
-                        }
-//                        if(billDetailList.getProductID() !=  null)
-                    }
-
-                    responseBillDetail.put("billID", listbillFound.getBillID());
-                    responseBillDetail.put("userID", listbillFound.getUserID());
-                    responseBillDetail.put("total", total);
-                    responseBillDetail.put("status", listbillFound.getStatus());
-                    responseBillDetail.put("billDetail", detailBill);
-                    response.setContentType("application/json");
-                    new ObjectMapper().writeValue(response.getOutputStream(), responseBillDetail);
-                }
-            }
-        }
-        if (check == false || billFound.size() == 0) {
-            Cart cart = cartService.searchCartByUserID(userID);
-            if (cart != null) {
-                int total = 0;
-                List<CartDetail> cartDetails = cartDetailService.findCartDetailByCartID(cart.getCartID());
-                Calendar calendar = Calendar.getInstance();
-                Date currentDate = calendar.getTime();
-                billService.insertToBill(total, 1, null, currentDate, userID);
+        Cart cart = cartService.searchCartByUserID(userID);
+        if(cart!=null){
+            List<CartDetail> cartDetails = cartDetailService.findCartDetailByCartID(cart.getCartID());
+                Date now = new Date();
+                billService.insertToBill(total,1,"no",now,userID);
+            if(cartDetails.size() > 0){
+                boolean status = false;
                 Bill bill = billService.getLastInsertedBill();
-                for (CartDetail carts :
-                        cartDetails
-                ) {
-                    billDetailService.insertToBillDetail(bill.getBillID(), carts.getProductID(), carts.getComponentID(), carts.getAmount());
-                    Component component = componentService.getComponentDetail(carts.getComponentID());
-                    String brand = brandService.findBrandByID(component.getBrandID()).getBrandName();
-                    String category = categoryService.getCategoryByCategoryID(component.getCategoryID()).getCategoryName();
-                    int price = carts.getAmount() * component.getPrice();
-                    detailBill.add(new ResponeNewInserCart(carts.getComponentID(), component.getComponentName(), price, carts.getAmount(), component.getDescription(), brand, category, component.getImage(), component.getStatus()));
-                    total = total + carts.getAmount() * component.getPrice();
+                for (CartDetail cartDetailItem:
+                        cartDetails) {
+                    if(cartDetailItem.getProductID()!=null){
+                        billDetailService.insertProductToBillDetail(bill.getBillID(), cartDetailItem.getProductID(),cartDetailItem.getAmount());
+                        ResponseProductDetail product = productService.getProductDetail(cartDetailItem.getProductID());
+                        int amount = product.getAmount() - cartDetailItem.getAmount();
+                        productService.updateProductAmount(cartDetailItem.getProductID(),amount);
+                        if(amount <= 3){
+                            PushNotificationRequest requestNoti = new PushNotificationRequest();
+                            requestNoti.setTitle("Test noti");
+                            requestNoti.setTopic("Notification when amount <= 3");
+                            requestNoti.setMessage("The amount of " + product.getProductID() +" only left " +amount);
+                            requestNoti.setToken("eesG9_KMS5yI5fu7xhQ7Li:APA91bGDWfeGaNENlqjDIAB3a8Zf_4svwlhCbbuy8Okn4Z_G9Eig-Tq9xE90PVMcYaxTODZRAZb4D7JEQ84ta_v-UjVnxpSawwJGDkbUhaUnDrRTAjTNN1JxrpkgX9dtG77l3Lr3UC1-");
+                            pushNotificationService.sendPushNotificationToToken(requestNoti);
+                        }
+                        cartDetailService.deleteProduct(cartDetailItem.getCartID(),cartDetailItem.getProductID());
+                        status = true;
+                    } else if (cartDetailItem.getComponentID()!=0) {
+                        billDetailService.insertComponentToBillDetail(bill.getBillID(), cartDetailItem.getComponentID(),cartDetailItem.getAmount());
+                        Component component = componentService.getComponentDetail(cartDetailItem.getComponentID());
+                        int amount = component.getAmount() - cartDetailItem.getAmount();
+                        componentService.updateAmountForComponent(cartDetailItem.getComponentID(), amount);
+                        if(amount <= 3){
+                            PushNotificationRequest requestNoti = new PushNotificationRequest();
+                            requestNoti.setTitle("Test noti");
+                            requestNoti.setTopic("Notification when amount <= 3");
+                            requestNoti.setMessage("The amount of " + component.getComponentName() +" only left " +amount);
+                            requestNoti.setToken("eesG9_KMS5yI5fu7xhQ7Li:APA91bGDWfeGaNENlqjDIAB3a8Zf_4svwlhCbbuy8Okn4Z_G9Eig-Tq9xE90PVMcYaxTODZRAZb4D7JEQ84ta_v-UjVnxpSawwJGDkbUhaUnDrRTAjTNN1JxrpkgX9dtG77l3Lr3UC1-");
+                            pushNotificationService.sendPushNotificationToToken(requestNoti);
+                        }
+                        cartDetailService.deleteComponent(cartDetailItem.getCartID(),cartDetailItem.getComponentID());
+                        status = true;
+                    }
                 }
-                responseBillDetail.put("billID", bill.getBillID());
-                responseBillDetail.put("userID", userID);
-                responseBillDetail.put("total", total);
-                responseBillDetail.put("status", bill.getStatus());
-                responseBillDetail.put("billDetail", detailBill);
-                response.setContentType("application/json");
-                new ObjectMapper().writeValue(response.getOutputStream(), responseBillDetail);
+                if(status) cartService.deteleCartByUser(userID);
             }
-
-
+        }else if(cart == null){
+            responseBillDetail.put("Status","cart is null, cannot checkout");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
+            new ObjectMapper().writeValue(response.getOutputStream(), responseBillDetail);
         }
     }
     @PostMapping("/finishCheckout")

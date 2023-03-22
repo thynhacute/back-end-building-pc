@@ -12,11 +12,14 @@
         <result column="amount" property="amount"/>
     </resultMap>
 
-    <insert id="insertToBillDetail" parameterType="com.webapp.buildPC.domain.BillDetail">
-        INSERT INTO BillDetail (billID,productID,componentID,amount)
-        VALUES (#{billID},#{productID},#{componentID},#{amount});
+    <insert id="insertComponentToBillDetail" parameterType="com.webapp.buildPC.domain.BillDetail">
+        INSERT INTO BillDetail (billID,componentID,amount)
+        VALUES (#{billID},#{componentID},#{amount});
     </insert>
-
+    <insert id="insertProductToBillDetail" parameterType="com.webapp.buildPC.domain.BillDetail">
+        INSERT INTO BillDetail (billID,productID,amount)
+        VALUES (#{billID},#{productID},#{amount});
+    </insert>
     <select id="findBillDetailByBillID" parameterType="com.webapp.buildPC.domain.BillDetail" resultMap="BillDetailMap">
         SELECT
         billID,

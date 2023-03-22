@@ -19,4 +19,5 @@ public interface ProductMapper {
     void removeProduct(String productID);
 
     void updateProduct(String productID, int amount, int total, String userID);
+    void updateProductAmount(String productID,int amount);
 }

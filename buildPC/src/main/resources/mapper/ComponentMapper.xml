@@ -115,11 +115,11 @@
                     and Component.categoryID = Category.categoryID
                     and Attribute.attributeID = #{attributeID} and Category.categoryID = #{categoryID}
     </select>
-    <insert id="updateAmountForComponent" parameterType="com.webapp.buildPC.domain.CartDetail">
+    <update id="updateAmountForComponent" parameterType="com.webapp.buildPC.domain.CartDetail">
         UPDATE Component
         SET amount = #{amount}
         WHERE componentID = #{componentID}
-    </insert>
+    </update>
 
     <select id="getComponentListByCategoryTypeID" resultType="com.webapp.buildPC.domain.Component">
         SELECT
