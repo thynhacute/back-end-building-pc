@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ResponseProductDetail {
     private String productID;
+    private String imageProduct;
     private List<Component> components;
     private int amount;
     private double total;

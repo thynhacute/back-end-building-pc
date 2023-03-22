@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface ProductMapper {
 
-    void addProduct(String productID, int amount, int total, String userID);
+    void addProduct(String productID, String imageProduct, int amount, int total, String userID);
 
     List<Product> getAllProducts();
 
@@ -18,5 +18,5 @@ public interface ProductMapper {
 
     void removeProduct(String productID);
 
-    void updateProduct(String productID, int amount, int total, String userID);
+    void updateProduct(String productID, String imageProduct,int amount, int total, String userID);
 }

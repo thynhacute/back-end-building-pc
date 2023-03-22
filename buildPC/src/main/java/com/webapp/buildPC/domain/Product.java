@@ -10,9 +10,8 @@ import lombok.NoArgsConstructor;
 public class Product {
 
     private String productID;
-
+    private String imageProduct;
     private int amount;
-
     private int total;
 
 
