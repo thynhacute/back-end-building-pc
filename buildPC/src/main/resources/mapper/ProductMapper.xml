@@ -10,6 +10,14 @@
         values (#{productID}, #{amount}, #{total}, #{userID})
     </insert>
 
+    <update id="updateProduct" parameterType="com.webapp.buildPC.domain.Product">
+        update Product
+        set amount = #{amount},
+        total = #{total},
+        userID = #{userID}
+        where productID = #{productID}
+    </update>
+
     <select id="getAllProducts" resultType="com.webapp.buildPC.domain.Product">
         SELECT productID, amount, total FROM Product, User, Role
                     Where Product.userID = User.userID

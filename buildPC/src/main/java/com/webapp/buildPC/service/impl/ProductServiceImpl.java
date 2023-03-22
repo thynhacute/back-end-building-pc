@@ -98,4 +98,25 @@ public class ProductServiceImpl implements ProductService {
         productMapper.removeProduct(productID);
         pcDetailMapper.removeProductDetail(productID);
     }
+
+    @Override
+    @Transactional
+    public void updateProduct(RequestCustomPC requestCustomPC) {
+        String productID = requestCustomPC.getProductID();
+        List<String> listComponent = requestCustomPC.getListComponent();
+        String userID = requestCustomPC.getUserID();
+        int amount = requestCustomPC.getAmount();
+        int total = requestCustomPC.getTotal();
+
+        // Delete all previous PCDetails for the product
+        pcDetailMapper.removeProductDetail(productID);
+
+        // Update the Product table with the new values
+        productMapper.updateProduct(productID, amount, total, userID);
+
+        // Loop through the new ListComponent and add each component to the PCDetail table
+        for (String componentID : listComponent) {
+            pcDetailMapper.addListPCDetail(productID, componentID);
+        }
+    }
 }

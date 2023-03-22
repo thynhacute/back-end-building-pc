@@ -21,6 +21,11 @@ public class ProductController {
         productService.addProduct(requestCustomPC);
     }
 
+    @PostMapping("/updateProduct")
+    public void updateProduct(@RequestBody RequestCustomPC requestCustomPC){
+        productService.updateProduct(requestCustomPC);
+    }
+
     @GetMapping("/getAllProducts")
     public List<ResponseProductDetail> getAllProducts(){
         return productService.getAllProduct();

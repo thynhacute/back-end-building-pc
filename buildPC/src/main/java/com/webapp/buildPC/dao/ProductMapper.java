@@ -17,4 +17,6 @@ public interface ProductMapper {
     List<Product> getProductOfUser(String userID);
 
     void removeProduct(String productID);
+
+    void updateProduct(String productID, int amount, int total, String userID);
 }
