@@ -10,6 +10,8 @@ public interface ProductService {
 
     void addProduct(RequestCustomPC requestCustomPC);
 
+    void updateProduct(RequestCustomPC requestCustomPC);
+
     List<ResponseProductDetail> getAllProduct();
 
     ResponseProductDetail getProductDetail(String productID);
@@ -17,4 +19,5 @@ public interface ProductService {
     List<ResponseProductDetail> getProductOfUser(String userID);
 
     void removeProduct(String productID);
+
 }
