@@ -13,10 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 public class RequestCustomPC {
     private String productID;
+    private String imageProduct;
     private List<String> listComponent;
     private String userID;
     private int amount;
-
     private int total;
 
 }

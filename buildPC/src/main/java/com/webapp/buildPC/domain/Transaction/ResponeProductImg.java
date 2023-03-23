@@ -1,20 +1,19 @@
 package com.webapp.buildPC.domain.Transaction;
 
-import com.webapp.buildPC.domain.Component;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseProductDetail {
+public class ResponeProductImg {
     private String productID;
-    private String imageProduct;
-    private List<Component> components;
+    private List<String> productDetail;
     private int amount;
     private double total;
+    private String img;
+
 
 }

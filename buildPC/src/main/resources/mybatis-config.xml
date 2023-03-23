@@ -35,6 +35,8 @@
 
         <mapper resource="mapper/PCDetailMapper.xml"></mapper>
 
+        <mapper resource="mapper/AddressMapper.xml"></mapper>
 
+        <mapper resource="mapper/AddressDetailMapper.xml"></mapper>
     </mappers>
 </configuration>

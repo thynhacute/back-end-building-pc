@@ -8,4 +8,5 @@ public interface CartService {
     Cart searchCartByUserID(String userID);
     Cart getLastCart(String userID);
     void deteleCartByUser(String userID);
+    void addCustomToCart(String userID,String productID,int amount);
 }

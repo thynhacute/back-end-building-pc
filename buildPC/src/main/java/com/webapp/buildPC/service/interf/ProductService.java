@@ -20,5 +20,6 @@ public interface ProductService {
 
     void removeProduct(String productID);
     void updateProductAmount(String productID,int amount);
+    void addProductCustomToCart(RequestCustomPC requestCustomPC);
 
 }

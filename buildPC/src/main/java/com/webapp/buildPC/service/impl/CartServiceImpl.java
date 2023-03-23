@@ -1,5 +1,6 @@
 package com.webapp.buildPC.service.impl;
 
+import com.webapp.buildPC.dao.CartDetailMapper;
 import com.webapp.buildPC.dao.CartMapper;
 import com.webapp.buildPC.domain.Cart;
 import com.webapp.buildPC.domain.CartDetail;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class CartServiceImpl implements CartService {
+    private final CartDetailMapper cartDetailMapper;
 
     private final CartMapper cartMapper;
     @Override
@@ -41,5 +43,16 @@ public class CartServiceImpl implements CartService {
     public void deteleCartByUser(String userID) {
         log.debug("delete cart by user");
         cartMapper.deteleCartByUser(userID);
+    }
+    @Override
+    public void addCustomToCart(String userID, String productID, int amount) {
+        Cart cart = cartMapper.searchCartByUserID(userID);
+        if(cart==null){
+            cartMapper.insertToCart(userID);
+            Cart cartInserted = cartMapper.getLastCart(userID);
+            cartDetailMapper.insertProductCartDetail(cartInserted.getCartID(),productID,amount);
+        } else {
+            cartDetailMapper.insertProductCartDetail(cart.getCartID(),productID,amount);
+        }
     }
 }

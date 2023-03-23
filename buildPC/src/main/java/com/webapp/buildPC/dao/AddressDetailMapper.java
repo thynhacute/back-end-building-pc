@@ -1,0 +1,11 @@
+package com.webapp.buildPC.dao;
+
+import com.webapp.buildPC.domain.AddressDetail;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+
+@Mapper
+public interface AddressDetailMapper {
+    List<AddressDetail> getListAddressByUser (String userID);
+}

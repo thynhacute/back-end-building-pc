@@ -8,10 +8,14 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BillResponeByStatus {    private int billID;
-    private List<ResponeNewInserCart> componentDetail;
+public class BillResponeByStatus {
     private String userID;
-    private int total;
+    private int billID;
+    private String gmail;
+    private String phoneNumber;
+    private List<ComponentRespone> component;
+    private List<ResponeProductImg> product;
+    private double total;
     private int amount;
     private String paymentMethod;
     private String payDate;

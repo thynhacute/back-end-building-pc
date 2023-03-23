@@ -45,6 +45,9 @@ public class ProductController {
     public void removeProduct(@RequestParam String productID){
         productService.removeProduct(productID);
     }
-
+    @PostMapping("/addProductCustomToCart")
+    public void addProductCustomToCart(@RequestBody RequestCustomPC requestCustomPC){
+        productService.addProductCustomToCart(requestCustomPC);
+    }
 
 }

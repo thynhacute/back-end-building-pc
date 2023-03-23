@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.webapp.buildPC.dao.AddressMapper">
+
+    <select id="getAddressByAddressID" parameterType="com.webapp.buildPC.domain.Address" resultType="com.webapp.buildPC.domain.Address">
+        SELECT  addressID,
+                provice,
+                district,
+                ward,
+                apartmentNumber,
+                codeArea
+        FROM Address WHERE addressID = #{addressID}
+    </select>
+
+</mapper>

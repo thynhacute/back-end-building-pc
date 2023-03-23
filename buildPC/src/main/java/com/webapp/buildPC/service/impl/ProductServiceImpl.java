@@ -8,6 +8,7 @@ import com.webapp.buildPC.domain.PCDetail;
 import com.webapp.buildPC.domain.Product;
 import com.webapp.buildPC.domain.Transaction.RequestCustomPC;
 import com.webapp.buildPC.domain.Transaction.ResponseProductDetail;
+import com.webapp.buildPC.service.interf.CartService;
 import com.webapp.buildPC.service.interf.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper productMapper;
     private final PCDetailMapper pcDetailMapper;
     private final ComponentMapper componentMapper;
+    private final CartService cartService;
 
 
     @Override
@@ -32,12 +34,13 @@ public class ProductServiceImpl implements ProductService {
     public void addProduct(RequestCustomPC requestCustomPC) {
         String productID = requestCustomPC.getProductID();
         List<String> listComponent = requestCustomPC.getListComponent();
+        String imageProduct = requestCustomPC.getImageProduct();
         String userID = requestCustomPC.getUserID();
         int amount = requestCustomPC.getAmount();
         int total = requestCustomPC.getTotal();
 
         // Add the product to the Product table
-        productMapper.addProduct(productID, amount, total, userID);
+        productMapper.addProduct(productID, imageProduct, amount, total, userID);
 
         // Loop through the ListComponent and add each component to the PCDetail table
         for (String componentID : listComponent) {
@@ -56,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
                 Component component = componentMapper.getComponentDetail(pcDetail.getComponentID());
                 componentDtoList.add(component);
             }
-            ResponseProductDetail productDto = new ResponseProductDetail(product.getProductID(), componentDtoList, product.getAmount(), product.getTotal());
+            ResponseProductDetail productDto = new ResponseProductDetail(product.getProductID(), product.getImageProduct(), componentDtoList, product.getAmount(), product.getTotal());
             productDtoList.add(productDto);
         }
         return productDtoList;
@@ -71,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
                 Component component = componentMapper.getComponentDetail(pcDetail.getComponentID());
                 componentDtoList.add(component);
             }
-            ResponseProductDetail productDto = new ResponseProductDetail(product.getProductID(), componentDtoList, product.getAmount(), product.getTotal());
+            ResponseProductDetail productDto = new ResponseProductDetail(product.getProductID(), product.getImageProduct(),componentDtoList, product.getAmount(), product.getTotal());
         return productDto;
     }
 
@@ -86,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
                 Component component = componentMapper.getComponentDetail(pcDetail.getComponentID());
                 componentDtoList.add(component);
             }
-            ResponseProductDetail productDto = new ResponseProductDetail(product.getProductID(), componentDtoList, product.getAmount(), product.getTotal());
+            ResponseProductDetail productDto = new ResponseProductDetail(product.getProductID(), product.getImageProduct(), componentDtoList, product.getAmount(), product.getTotal());
             productDtoList.add(productDto);
         }
         return productDtoList;
@@ -108,6 +111,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public void updateProduct(RequestCustomPC requestCustomPC) {
         String productID = requestCustomPC.getProductID();
+        String imageProduct = requestCustomPC.getImageProduct();
         List<String> listComponent = requestCustomPC.getListComponent();
         String userID = requestCustomPC.getUserID();
         int amount = requestCustomPC.getAmount();
@@ -117,11 +121,30 @@ public class ProductServiceImpl implements ProductService {
         pcDetailMapper.removeProductDetail(productID);
 
         // Update the Product table with the new values
-        productMapper.updateProduct(productID, amount, total, userID);
+        productMapper.updateProduct(productID, imageProduct, amount, total, userID);
 
         // Loop through the new ListComponent and add each component to the PCDetail table
         for (String componentID : listComponent) {
             pcDetailMapper.addListPCDetail(productID, componentID);
         }
+    }
+    @Transactional
+    @Override
+    public void addProductCustomToCart(RequestCustomPC requestCustomPC) {
+        String productID = requestCustomPC.getProductID();
+        List<String> listComponent = requestCustomPC.getListComponent();
+        String imageProduct = requestCustomPC.getImageProduct();
+        String userID = requestCustomPC.getUserID();
+        int amount = requestCustomPC.getAmount();
+        int total = requestCustomPC.getTotal();
+
+        // Add the product to the Product table
+        productMapper.addProduct(productID, imageProduct, amount, total, userID);
+
+        // Loop through the ListComponent and add each component to the PCDetail table
+        for (String componentID : listComponent) {
+            pcDetailMapper.addListPCDetail(productID, componentID);
+        }
+        cartService.addCustomToCart(userID,productID,amount);
     }
 }

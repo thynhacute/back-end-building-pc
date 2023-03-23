@@ -154,7 +154,7 @@ public class CartController {
         Map<String, Object> responseCartDetail = new HashMap<>();
         if (cart != null) {
             List<CartDetail> cartDetail = cartDetailService.findCartDetailByCartID(cart.getCartID());
-            List<ResponeProduct> products = new ArrayList<>();
+            List<ResponeProductImg> products = new ArrayList<>();
             List<ComponentRespone> componentRespones = new ArrayList<>();
             int quantity = 0;
             if (cartDetail.size() > 0) {
@@ -163,13 +163,13 @@ public class CartController {
                     if(item.getProductID()!=null){
                         List<String> productDetail = new ArrayList<>();
                         List<PCDetail> pcDetails = pcDetailService.getPCDetailByProductID(item.getProductID());
-                         ResponseProductDetail product =  productService.getProductDetail(item.getProductID());
+                         ResponseProductDetail product = productService.getProductDetail(item.getProductID());
                         for (PCDetail pcDetail:
                                 pcDetails) {
                             Component component = componentService.getComponentDetail(pcDetail.getComponentID());
                             productDetail.add(component.getCategoryID() + " : "+ component.getComponentName());
                         }
-                        products.add(new ResponeProduct(item.getProductID(),productDetail, item.getAmount(), product.getTotal()));
+                        products.add(new ResponeProductImg(item.getProductID(),productDetail, item.getAmount(), product.getTotal(),product.getImageProduct()));
 
                     }
                     else {
